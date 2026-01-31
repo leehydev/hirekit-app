@@ -46,21 +46,27 @@ export function AnswerList({
 
   if (answers.length === 0) {
     // 공개 답변 0개 + 회원전용만 있을 때 (비로그인)
-    if (!isLoggedIn && membersOnlyCount > 0) {
+    if (membersOnlyCount > 0) {
       return (
         <div className="text-center py-12">
           <p className="text-muted-foreground text-sm">
             회원전용 답변이 {membersOnlyCount}개 있어요.
           </p>
-          <p className="text-muted-foreground text-xs mt-2">
-            <Link
-              href="/login"
-              className="font-medium text-primary underline underline-offset-2 hover:no-underline"
-            >
-              로그인
-            </Link>
-            하면 확인할 수 있어요.
-          </p>
+          {!isLoggedIn ? (
+            <p className="text-muted-foreground text-xs mt-2">
+              <Link
+                href="/login"
+                className="font-medium text-primary underline underline-offset-2 hover:no-underline"
+              >
+                로그인
+              </Link>
+              하면 확인할 수 있어요.
+            </p>
+          ) : (
+            <p className="text-muted-foreground text-xs mt-2">
+              답변 하나를 공유하면 모든 답변을 확인할 수 있어요.
+            </p>
+          )}
         </div>
       );
     }

@@ -35,7 +35,7 @@ export function FeedItemCard({ item, isLoggedIn }: FeedItemCardProps) {
   const quotePreview = representativeAnswer?.content
     ? truncateText(representativeAnswer.content, 120)
     : undefined;
-  const hasMembersOnly = !isLoggedIn && answerCounts.membersOnlyAnswerCount > 0;
+  const hasMembersOnly = answerCounts.membersOnlyAnswerCount > 0;
 
   return (
     <article className="rounded-xl bg-card p-4 space-y-3 border border-border/50">
@@ -67,7 +67,7 @@ export function FeedItemCard({ item, isLoggedIn }: FeedItemCardProps) {
               {passStatusLabel}
             </span>
           )}
-          {(tipPreview || quotePreview) && (
+          {tipPreview && (
             <div className="flex items-center gap-1 text-muted-foreground text-xs">
               <Lightbulb className="size-4" style={{ color: 'var(--tip-yellow)' }} />
               <span>팁</span>
@@ -100,7 +100,7 @@ export function FeedItemCard({ item, isLoggedIn }: FeedItemCardProps) {
             </Link>
           </Button>
         </div>
-        {hasMembersOnly && (
+        {hasMembersOnly && !isLoggedIn && (
           <p className="text-xs text-muted-foreground">
             <Link
               href="/login"
@@ -109,6 +109,12 @@ export function FeedItemCard({ item, isLoggedIn }: FeedItemCardProps) {
               로그인
             </Link>
             하면 답변 {answerCounts.membersOnlyAnswerCount}개를 더 볼 수 있어요.
+          </p>
+        )}
+        {hasMembersOnly && isLoggedIn && (
+          <p className="text-xs text-muted-foreground">
+            답변 하나를 공유하면 {answerCounts.membersOnlyAnswerCount}개의 답변을 더 확인할 수
+            있어요.
           </p>
         )}
       </div>

@@ -15,10 +15,8 @@ interface AnswerCardProps {
 
 export function AnswerCard({ answer, isLoggedIn, onLike }: AnswerCardProps) {
   const { getLabel } = useCodes();
-  const passStatusLabel = answer.passStatus
-    ? getLabel('PassStatus', answer.passStatus)
-    : null;
-  const authorLabel = answer.authorHidden ? '익명' : answer.authorName ?? '익명';
+  const passStatusLabel = answer.passStatus ? getLabel('PassStatus', answer.passStatus) : null;
+  const authorLabel = answer.authorHidden ? '익명' : (answer.authorName ?? '익명');
   const isMembersOnly = answer.visibility === 'MEMBERS_ONLY';
 
   // 회원 전용 답변 블러 처리
@@ -26,14 +24,10 @@ export function AnswerCard({ answer, isLoggedIn, onLike }: AnswerCardProps) {
     return (
       <div className="rounded-xl bg-card p-5 border border-border/50 relative overflow-hidden min-h-[200px]">
         <div className="blur-sm select-none space-y-3">
-          <p className="text-foreground leading-relaxed">
-            {answer.content.slice(0, 100)}...
-          </p>
+          <p className="text-foreground leading-relaxed">{answer.content.slice(0, 100)}...</p>
           {answer.tip && (
             <div className="space-y-2 p-4 rounded-lg bg-muted/30">
-              <p className="text-sm text-muted-foreground">
-                {answer.tip.slice(0, 50)}...
-              </p>
+              <p className="text-sm text-muted-foreground">{answer.tip.slice(0, 50)}...</p>
             </div>
           )}
         </div>
