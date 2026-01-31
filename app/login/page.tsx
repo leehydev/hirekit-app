@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { RiMessage3Fill } from '@remixicon/react';
 import { API_URL } from '@/lib/api';
 import { useNavigationStore } from '@/store/navigation';
 import { LoginButton, AppLogo } from '@/components/Login';

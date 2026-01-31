@@ -9,7 +9,7 @@ interface NavigationState {
 }
 
 export const useNavigationStore = create<NavigationState>((set) => ({
-  isBottomNavVisible: false,
+  isBottomNavVisible: true,
   showBottomNav: () => set({ isBottomNavVisible: true }),
   hideBottomNav: () => set({ isBottomNavVisible: false }),
   setBottomNavVisible: (visible) => set({ isBottomNavVisible: visible }),
