@@ -1,22 +1,15 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { userKeys } from '@/lib/api';
 import { useNavigationStore } from '@/store/navigation';
 
 /**
- * OAuth 콜백 페이지
- *
- * 카카오 로그인 성공 후 백엔드가 이 페이지로 리다이렉트함
- * 토큰은 이미 쿠키에 저장되어 있음 (백엔드가 Set-Cookie로 설정)
- *
- * URL 예시:
- * /oauth/callback (성공 - 토큰은 쿠키에)
- * /oauth/callback?error=xxx (실패)
+ * useSearchParams()를 사용하는 내부 컴포넌트 (Suspense 경계 필요)
  */
-export default function OAuthCallbackPage() {
+function OAuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -58,5 +51,36 @@ export default function OAuthCallbackPage() {
     >
       <p>로그인 처리 중...</p>
     </div>
+  );
+}
+
+/**
+ * OAuth 콜백 페이지
+ *
+ * 카카오 로그인 성공 후 백엔드가 이 페이지로 리다이렉트함
+ * 토큰은 이미 쿠키에 저장되어 있음 (백엔드가 Set-Cookie로 설정)
+ *
+ * URL 예시:
+ * /oauth/callback (성공 - 토큰은 쿠키에)
+ * /oauth/callback?error=xxx (실패)
+ */
+export default function OAuthCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+          }}
+        >
+          <p>로그인 처리 중...</p>
+        </div>
+      }
+    >
+      <OAuthCallbackContent />
+    </Suspense>
   );
 }
