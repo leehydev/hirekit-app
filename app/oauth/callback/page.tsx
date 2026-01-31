@@ -1,7 +1,10 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { userKeys } from '@/lib/api';
+import { useNavigationStore } from '@/store/navigation';
 
 /**
  * OAuth 콜백 페이지
@@ -16,28 +19,33 @@ import { useRouter, useSearchParams } from 'next/navigation';
 export default function OAuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
+  const hideBottomNav = useNavigationStore((s) => s.hideBottomNav);
+  const showBottomNav = useNavigationStore((s) => s.showBottomNav);
 
-  // 중복 실행 방지
   const isProcessed = useRef(false);
+
+  useEffect(() => {
+    hideBottomNav();
+    return () => showBottomNav();
+  }, [hideBottomNav, showBottomNav]);
 
   useEffect(() => {
     if (isProcessed.current) return;
     isProcessed.current = true;
 
-    // URL에서 에러 파라미터 확인
     const error = searchParams.get('error');
 
     if (error) {
-      // 로그인 실패
       console.error('OAuth 로그인 실패:', error);
       alert('로그인에 실패했습니다: ' + error);
       router.replace('/login');
     } else {
-      // 로그인 성공 (토큰은 쿠키에 자동 저장됨)
-      console.log('로그인 성공!');
+      // 로그인 성공 → 유저 쿼리 무효화 후 메인으로 이동 (메인에서 useUser가 최신 데이터 요청)
+      queryClient.invalidateQueries({ queryKey: userKeys.me() });
       router.replace('/');
     }
-  }, []);
+  }, [queryClient, searchParams, router]);
 
   return (
     <div

@@ -1,42 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { fetchApi, logout } from '@/lib/api';
-
-/**
- * 사용자 정보 타입
- */
-interface User {
-  id: string;
-  nickname: string;
-  email: string;
-}
+import { useQueryClient } from '@tanstack/react-query';
+import { logout, userKeys } from '@/lib/api';
+import { useUser } from '@/hooks/useUser';
 
 /**
  * 메인 페이지
  */
 export default function HomePage() {
-  // 사용자 정보 상태
-  const [user, setUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
+  const { data: user, isLoading, isError } = useUser();
 
-  // 로딩 상태
-  const [loading, setLoading] = useState(true);
+  const handleLogout = () => {
+    queryClient.removeQueries({ queryKey: userKeys.me() });
+    logout();
+  };
 
-  // 페이지 로드 시 사용자 정보 가져오기
-  useEffect(() => {
-    fetchApi<User>('/api/users/me')
-      .then(setUser)
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
-
-  // 로딩 중
-  if (loading) {
+  if (isLoading) {
     return <p>로딩 중...</p>;
   }
 
-  // 로그인 안 됨
-  if (!user) {
+  if (isError || !user) {
     return (
       <div>
         <p>로그인이 필요합니다.</p>
@@ -45,12 +29,16 @@ export default function HomePage() {
     );
   }
 
-  // 로그인 됨
   return (
     <div style={{ padding: '20px' }}>
       <h1>안녕하세요, {user.nickname}님!</h1>
       <p>이메일: {user.email}</p>
-      <button onClick={logout}>로그아웃</button>
+      <button onClick={handleLogout}>로그아웃</button>
+      <p className="mt-4">
+        <a href="/company-search" className="text-primary underline">
+          사업자 검색 예시
+        </a>
+      </p>
     </div>
   );
 }

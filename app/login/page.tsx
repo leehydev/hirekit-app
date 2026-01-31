@@ -1,12 +1,21 @@
 'use client';
 
+import { useEffect } from 'react';
+import { API_URL } from '@/lib/api';
+import { useNavigationStore } from '@/store/navigation';
+
 /**
  * 로그인 페이지
  * 카카오 로그인 버튼 제공
  */
 export default function LoginPage() {
-  // 백엔드 API 주소
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const hideBottomNav = useNavigationStore((s) => s.hideBottomNav);
+  const showBottomNav = useNavigationStore((s) => s.showBottomNav);
+
+  useEffect(() => {
+    hideBottomNav();
+    return () => showBottomNav();
+  }, [hideBottomNav, showBottomNav]);
 
   /**
    * 카카오 로그인 버튼 클릭 시 실행
@@ -14,7 +23,7 @@ export default function LoginPage() {
    */
   const handleKakaoLogin = () => {
     // 백엔드가 카카오 로그인 페이지로 리다이렉트 해줌
-    window.location.href = `${apiUrl}/oauth2/authorization/kakao`;
+    window.location.href = `${API_URL}/oauth2/authorization/kakao`;
   };
 
   return (
