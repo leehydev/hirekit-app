@@ -1,18 +1,18 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
-import { logout, userKeys } from '@/lib/api';
+import { logout } from '@/lib/api';
+import { useUserStore } from '@/store/user';
 import { useUser } from '@/hooks/useUser';
 
 /**
  * 메인 페이지
  */
 export default function HomePage() {
-  const queryClient = useQueryClient();
   const { data: user, isLoading, isError } = useUser();
+  const clearUser = useUserStore((s) => s.clearUser);
 
   const handleLogout = () => {
-    queryClient.removeQueries({ queryKey: userKeys.me() });
+    clearUser();
     logout();
   };
 

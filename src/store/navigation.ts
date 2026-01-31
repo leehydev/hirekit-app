@@ -6,6 +6,9 @@ interface NavigationState {
   showBottomNav: () => void;
   hideBottomNav: () => void;
   setBottomNavVisible: (visible: boolean) => void;
+  /** 피드 헤더 햄버거 메뉴(Sheet) 열림 여부 – 리마운트 시에도 유지 */
+  isHeaderMenuOpen: boolean;
+  setHeaderMenuOpen: (open: boolean) => void;
 }
 
 export const useNavigationStore = create<NavigationState>((set) => ({
@@ -13,4 +16,6 @@ export const useNavigationStore = create<NavigationState>((set) => ({
   showBottomNav: () => set({ isBottomNavVisible: true }),
   hideBottomNav: () => set({ isBottomNavVisible: false }),
   setBottomNavVisible: (visible) => set({ isBottomNavVisible: visible }),
+  isHeaderMenuOpen: false,
+  setHeaderMenuOpen: (open) => set({ isHeaderMenuOpen: open }),
 }));

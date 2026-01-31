@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { FeedHeader } from '@/components/Feed/FeedHeader';
@@ -22,12 +23,29 @@ import { useCodes } from '@/hooks/useCodes';
 const PAGE_SIZE = 5;
 
 export default function FeedPage() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const setBottomNavVisible = useNavigationStore((s) => s.setBottomNavVisible);
   const { data: user, isLoading: isUserLoading } = useUser();
   const isLoggedIn = !!user;
 
-  const [job, setJob] = useState<string>('all');
+  const job = searchParams.get('job') ?? 'all';
   const [sortBy, setSortBy] = useState<SortBy>('latest');
+
+  const setJob = useCallback(
+    (value: string) => {
+      const next = new URLSearchParams(searchParams.toString());
+      if (value === 'all') {
+        next.delete('job');
+      } else {
+        next.set('job', value);
+      }
+      const query = next.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { data: codesData } = useCodes();
   const jobCodes = codesData?.find((g) => g.type === 'Job')?.codes ?? [];
