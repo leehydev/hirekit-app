@@ -1,0 +1,181 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { QuestionDetailHeader, QuestionContent, AnswerList } from '@/components/Question';
+import {
+  getQuestionDetail,
+  getAnswers,
+  toggleAnswerLike,
+  questionKeys,
+  Answer,
+} from '@/lib/api/questions';
+import { useUser } from '@/hooks/useUser';
+import { useNavigationStore } from '@/store/navigation';
+
+const PAGE_SIZE = 10;
+
+export default function QuestionDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+  const { data: user } = useUser();
+  const isLoggedIn = !!user;
+  const setBottomNavVisible = useNavigationStore((s) => s.setBottomNavVisible);
+  const [sortBy] = useState<'latest' | 'most-liked'>('latest');
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setBottomNavVisible(false);
+  }, [setBottomNavVisible]);
+
+  // 질문 상세 조회
+  const {
+    data: question,
+    isLoading: isQuestionLoading,
+    isError: isQuestionError,
+  } = useQuery({
+    queryKey: questionKeys.detail(id),
+    queryFn: () => getQuestionDetail(id),
+    retry: false,
+  });
+
+  // 답변 목록 조회 (무한스크롤)
+  const {
+    data: answersData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isAnswersLoading,
+  } = useInfiniteQuery({
+    queryKey: questionKeys.answers(id, sortBy),
+    queryFn: ({ pageParam }) =>
+      getAnswers({
+        questionId: id,
+        cursor: pageParam,
+        size: PAGE_SIZE,
+        sortBy,
+      }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    initialPageParam: undefined as string | undefined,
+  });
+
+  // 좋아요 토글 mutation
+  const likeMutation = useMutation({
+    mutationFn: toggleAnswerLike,
+    onMutate: async (answerId) => {
+      // Optimistic update
+      await queryClient.cancelQueries({ queryKey: questionKeys.answers(id, sortBy) });
+
+      const previousData = queryClient.getQueryData(questionKeys.answers(id, sortBy));
+
+      queryClient.setQueryData(
+        questionKeys.answers(id, sortBy),
+        (old: { pages: { items: Answer[] }[] }) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page: { items: Answer[] }) => ({
+              ...page,
+              items: page.items.map((answer: Answer) =>
+                answer.id === answerId
+                  ? {
+                      ...answer,
+                      isLikedByMe: !answer.isLikedByMe,
+                      likeCount: answer.isLikedByMe ? answer.likeCount - 1 : answer.likeCount + 1,
+                    }
+                  : answer,
+              ),
+            })),
+          };
+        },
+      );
+
+      return { previousData };
+    },
+    onError: (_err, _answerId, context) => {
+      // Rollback on error
+      if (context?.previousData) {
+        queryClient.setQueryData(questionKeys.answers(id, sortBy), context.previousData);
+      }
+    },
+  });
+
+  const handleLike = (answerId: string) => {
+    if (!isLoggedIn) {
+      router.push('/login');
+      return;
+    }
+    likeMutation.mutate(answerId);
+  };
+
+  // 로딩 상태
+  if (isQuestionLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <QuestionDetailHeader questionId={id} />
+        <div className="px-4 py-8">
+          <p className="text-center text-sm text-muted-foreground">질문을 불러오는 중…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 상태 (404)
+  if (isQuestionError || !question) {
+    return (
+      <div className="min-h-screen bg-background">
+        <QuestionDetailHeader questionId={id} />
+        <div className="px-4 py-8 text-center space-y-4">
+          <p className="text-sm text-destructive">질문을 찾을 수 없습니다.</p>
+          <button onClick={() => router.back()} className="text-sm text-primary hover:underline">
+            돌아가기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const allAnswers = answersData?.pages.flatMap((p) => p.items) ?? [];
+
+  return (
+    <div className="min-h-screen bg-background pb-8">
+      <QuestionDetailHeader questionId={id} />
+
+      <div className="px-4 py-6 space-y-6">
+        {/* 질문 상세 */}
+        <QuestionContent question={question} isLoggedIn={isLoggedIn} />
+
+        {/* 답변 목록 섹션 */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-foreground">답변 {allAnswers.length}개</h2>
+
+            {/* 정렬 탭 */}
+            {/* <Tabs value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+              <TabsList className="w-fit">
+                <TabsTrigger value="latest">최신순</TabsTrigger>
+                <TabsTrigger value="most-liked">좋아요순</TabsTrigger>
+              </TabsList>
+            </Tabs> */}
+          </div>
+
+          {/* 답변 목록 */}
+          {isAnswersLoading ? (
+            <p className="text-center text-sm text-muted-foreground py-8">답변을 불러오는 중…</p>
+          ) : (
+            <AnswerList
+              answers={allAnswers}
+              isLoggedIn={isLoggedIn}
+              onLoadMore={fetchNextPage}
+              hasMore={hasNextPage}
+              isLoadingMore={isFetchingNextPage}
+              onLike={handleLike}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

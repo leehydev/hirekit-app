@@ -26,15 +26,13 @@ export function QuestionCard({ question }: QuestionCardProps) {
       </div>
 
       {/* Question title */}
-      <h3 className="text-foreground font-medium text-base leading-snug">
-        {question.title}
-      </h3>
+      <h3 className="text-foreground font-medium text-base leading-snug">{question.title}</h3>
 
       {/* Status and tip */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           {question.status === 'passed' && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-(--status-success-bg) text-(--status-success-text)">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-status-success-bg text-status-success-text">
               PASSED
             </span>
           )}
@@ -49,7 +47,7 @@ export function QuestionCard({ question }: QuestionCardProps) {
 
         {/* Quote preview if available */}
         {question.quotePreview && (
-          <p className="text-muted-foreground/80 text-sm italic pl-3 border-l-2 border-border">
+          <p className="text-muted-foreground/80 text-sm italic pl-3 border-l-2 border-border line-clamp-2-ellipsis">
             {question.quotePreview}
           </p>
         )}

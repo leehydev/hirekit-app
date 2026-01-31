@@ -29,9 +29,7 @@ export function BottomNav() {
             href={href}
             className={cn(
               'flex flex-col items-center gap-1 rounded-lg px-3 py-2 text-xs transition-colors min-w-0',
-              isActive
-                ? 'text-(--feed-accent-blue)'
-                : 'text-muted-foreground hover:text-foreground',
+              isActive ? 'text-feed-accent-blue' : 'text-muted-foreground hover:text-foreground',
             )}
             aria-current={isActive ? 'page' : undefined}
           >

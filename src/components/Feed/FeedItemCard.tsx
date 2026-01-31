@@ -70,7 +70,7 @@ export function FeedItemCard({ item, isLoggedIn }: FeedItemCardProps) {
         )}
 
         {quotePreview && (
-          <p className="text-muted-foreground/80 text-sm italic pl-3 border-l-2 border-border">
+          <p className="text-muted-foreground/80 text-sm italic pl-3 border-l-2 border-border line-clamp-2-ellipsis">
             {quotePreview}
           </p>
         )}
