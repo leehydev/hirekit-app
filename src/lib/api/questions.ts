@@ -1,5 +1,15 @@
 import { fetchApi } from './client';
 
+/** 질문 공개 범위 (코드 Job 아님) */
+export type QuestionVisibility = 'PUBLIC' | 'PRIVATE';
+
+export interface CreateQuestionRequest {
+  companyId: string;
+  job: string;
+  content: string;
+  visibility?: QuestionVisibility;
+}
+
 export interface QuestionDetail {
   id: string;
   createdAt: string;
@@ -38,6 +48,19 @@ export interface GetAnswersParams {
 export interface CursorAnswersResponse {
   items: Answer[];
   nextCursor: string | null;
+}
+
+/**
+ * 질문 등록
+ * @see POST /api/questions
+ */
+export async function createQuestion(
+  body: CreateQuestionRequest
+): Promise<QuestionDetail> {
+  return fetchApi<QuestionDetail>('/api/questions', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
 /**

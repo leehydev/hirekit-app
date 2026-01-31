@@ -38,7 +38,7 @@ export function QuestionContent({ question, isLoggedIn }: QuestionContentProps) 
       <div className="flex items-center justify-between pt-2 border-t border-border/50">
         <span className="text-sm text-muted-foreground">{authorLabel}</span>
         <Button variant="default" size="default" className="gap-2" asChild>
-          <Link href={isLoggedIn ? `/questions/${question.id}/answer` : '/login'}>
+          <Link href={isLoggedIn ? `/questions/${question.id}/answers/new` : '/login'}>
             <Pencil className="size-4" />
             답변하기
           </Link>

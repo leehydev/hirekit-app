@@ -86,7 +86,7 @@ export function FeedItemCard({ item, isLoggedIn }: FeedItemCardProps) {
             {formatAnswerCount(answerCounts.totalAnswerCount)}
           </Link>
           <Button size="sm" variant="outline" className="gap-1.5" asChild>
-            <Link href={`/questions/${question.id}/answer`}>
+            <Link href={`/questions/${question.id}/answers/new`}>
               <Pencil className="size-3.5" />
               답변하기
             </Link>
