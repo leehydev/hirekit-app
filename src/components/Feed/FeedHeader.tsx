@@ -17,21 +17,21 @@ export function FeedHeader() {
               className="rounded-lg"
             />
           </div>
-          <h1 className="text-lg font-semibold text-foreground">Interview Q&A</h1>
+          <h1 className="text-lg font-semibold text-foreground">면접 Q&A</h1>
         </Link>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
           <button
             className="p-2 rounded-lg hover:bg-accent transition-colors"
-            aria-label="Search"
+            aria-label="검색"
           >
             <Search className="size-5 text-foreground" />
           </button>
           <Link
             href="/profile"
             className="p-2 rounded-lg hover:bg-accent transition-colors"
-            aria-label="Profile"
+            aria-label="프로필"
           >
             <CircleUser className="size-6 text-foreground" />
           </Link>

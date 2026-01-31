@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { FeedHeader } from '@/components/Feed/FeedHeader';
-import { QuestionCard } from '@/components/Feed/QuestionCard';
+import { FeedItemCard } from '@/components/Feed/FeedItemCard';
 import {
   Select,
   SelectContent,
@@ -12,79 +13,132 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { mockQuestions } from '@/lib/mock-data/questions';
+import { getFeed, feedKeys, type FeedItemResponse } from '@/lib/api';
 import { SortBy } from '@/types/feed';
 import { useNavigationStore } from '@/store/navigation';
+import { useUser } from '@/hooks/useUser';
+
+const PAGE_SIZE = 5;
 
 export default function FeedPage() {
   const setBottomNavVisible = useNavigationStore((s) => s.setBottomNavVisible);
+  const { data: user, isLoading: isUserLoading } = useUser();
+  const isLoggedIn = !!user;
+
+  const [companyId, setCompanyId] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<SortBy>('latest');
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
+    useInfiniteQuery({
+      queryKey: [
+        ...feedKeys.list({
+          companyId: companyId === 'all' ? undefined : companyId,
+          size: PAGE_SIZE,
+        }),
+      ],
+      queryFn: ({ pageParam }) =>
+        getFeed({
+          companyId: companyId === 'all' ? undefined : companyId,
+          cursor: pageParam as string | undefined,
+          size: PAGE_SIZE,
+        }),
+      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      initialPageParam: undefined as string | undefined,
+    });
+
+  const allItems = data?.pages.flatMap((p) => p.items) ?? [];
+  const displayItems: FeedItemResponse[] =
+    sortBy === 'most-answers'
+      ? [...allItems].sort(
+          (a, b) => b.answerCounts.totalAnswerCount - a.answerCounts.totalAnswerCount,
+        )
+      : allItems;
+
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
     setBottomNavVisible(true);
   }, [setBottomNavVisible]);
-  const [company, setCompany] = useState<string>('all');
-  const [role, setRole] = useState<string>('dev');
-  const [sortBy, setSortBy] = useState<SortBy>('latest');
 
-  // Filter and sort questions based on selections
-  const filteredQuestions = mockQuestions;
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) handleLoadMore();
+      },
+      { rootMargin: '100px', threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [handleLoadMore]);
+
+  if (isUserLoading) {
+    return <p className="py-8 text-center text-sm text-muted-foreground">로딩 중…</p>;
+  }
+
+  function renderFeedList() {
+    if (isLoading) {
+      return <p className="text-muted-foreground text-sm py-8 text-center">불러오는 중…</p>;
+    }
+    if (isError) {
+      return (
+        <p className="text-destructive text-sm py-8 text-center">
+          {error instanceof Error ? error.message : '피드를 불러오지 못했어요.'}
+        </p>
+      );
+    }
+    if (displayItems.length === 0) {
+      return <p className="text-muted-foreground text-sm py-8 text-center">아직 질문이 없어요.</p>;
+    }
+    return displayItems.map((item) => (
+      <FeedItemCard key={item.question.id} item={item} isLoggedIn={isLoggedIn} />
+    ));
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
       <FeedHeader />
 
       <div className="px-4 py-4 space-y-4">
-        {/* Filters */}
-        <div className="grid grid-cols-2 gap-3">
-          <Select value={company} onValueChange={setCompany}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Company" />
+        {/* 필터: 회사 (전체만 지원) */}
+        <div className="grid grid-cols-1 gap-3">
+          <Select value={companyId} onValueChange={setCompanyId}>
+            <SelectTrigger className="w-full max-w-[200px]">
+              <SelectValue placeholder="회사" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Company</SelectItem>
-              <SelectItem value="major-it">Major IT</SelectItem>
-              <SelectItem value="unicorn">Unicorn</SelectItem>
-              <SelectItem value="startup">Startup</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={role} onValueChange={setRole}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="dev">Dev</SelectItem>
-              <SelectItem value="design">Design</SelectItem>
-              <SelectItem value="pm">PM</SelectItem>
-              <SelectItem value="data">Data</SelectItem>
+              <SelectItem value="all">전체</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Tabs */}
+        {/* 정렬 탭 */}
         <Tabs value={sortBy} onValueChange={(v) => setSortBy(v as SortBy)}>
           <TabsList variant="default" className="w-fit">
-            <TabsTrigger value="latest">Latest</TabsTrigger>
-            <TabsTrigger value="most-answers">Most Answers</TabsTrigger>
+            <TabsTrigger value="latest">최신순</TabsTrigger>
+            <TabsTrigger value="most-answers">답변 많은 순</TabsTrigger>
           </TabsList>
 
           <TabsContent value="latest" className="space-y-4 mt-4">
-            {filteredQuestions.map((question) => (
-              <QuestionCard key={question.id} question={question} />
-            ))}
+            {renderFeedList()}
           </TabsContent>
 
           <TabsContent value="most-answers" className="space-y-4 mt-4">
-            {[...filteredQuestions]
-              .sort((a, b) => b.answerCount - a.answerCount)
-              .map((question) => (
-                <QuestionCard key={question.id} question={question} />
-              ))}
+            {renderFeedList()}
           </TabsContent>
         </Tabs>
+
+        <div ref={loadMoreRef} className="h-4" aria-hidden />
+        {isFetchingNextPage && (
+          <p className="text-muted-foreground text-sm py-4 text-center">더 불러오는 중…</p>
+        )}
       </div>
 
-      {/* Floating Action Button */}
+      {/* 질문하기 FAB */}
       <button
         className="fixed right-4 bottom-24 z-50 flex items-center gap-2 px-5 py-3 rounded-full font-medium text-white shadow-lg transition-all hover:shadow-xl active:scale-95"
         style={{
@@ -96,10 +150,10 @@ export default function FeedPage() {
         onMouseLeave={(e) => {
           e.currentTarget.style.backgroundColor = 'var(--feed-accent-blue)';
         }}
-        aria-label="Ask Question"
+        aria-label="질문하기"
       >
         <Plus className="size-5" />
-        <span>Ask Question</span>
+        <span>질문하기</span>
       </button>
     </div>
   );

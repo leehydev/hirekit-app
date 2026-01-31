@@ -5,13 +5,23 @@ import { Building2 } from 'lucide-react';
 import { CompanySearchModal } from '@/components/CompanySearchModal';
 import { Button } from '@/components/ui/button';
 import type { CompanyResponse } from '@/lib/api';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 
 /**
- * 사업자 검색 모달 사용 예시 페이지
+ * 사업자 검색 모달 사용 예시 페이지 (로그인 필수)
  */
 export default function CompanySearchExamplePage() {
+  const { isLoading: isAuthLoading } = useRequireAuth();
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState<CompanyResponse | null>(null);
+
+  if (isAuthLoading) {
+    return (
+      <p className="py-12 text-center text-sm text-muted-foreground">
+        로딩 중…
+      </p>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
