@@ -19,9 +19,17 @@ export interface QuestionDetail {
   companyName: string;
   job: string;
   content: string;
+  visibility?: QuestionVisibility;
   authorHidden: boolean;
   authorId: string;
   authorName?: string;
+}
+
+export interface UpdateQuestionRequest {
+  job: string;
+  content: string;
+  visibility: QuestionVisibility;
+  authorHidden: boolean;
 }
 
 export interface Answer {
@@ -79,6 +87,42 @@ export async function createQuestion(
  */
 export async function getQuestionDetail(id: string): Promise<QuestionDetail> {
   return fetchApi<QuestionDetail>(`/api/questions/${id}`);
+}
+
+/**
+ * 질문 수정
+ * @see PUT /api/questions/:id
+ */
+export async function updateQuestion(
+  id: string,
+  body: UpdateQuestionRequest
+): Promise<QuestionDetail> {
+  return fetchApi<QuestionDetail>(`/api/questions/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  });
+}
+
+/**
+ * 질문 삭제
+ * @see DELETE /api/questions/:id
+ */
+export async function deleteQuestion(id: string): Promise<void> {
+  return fetchApi<void>(`/api/questions/${id}`, { method: 'DELETE' });
+}
+
+/**
+ * 질문 공개상태 변경
+ * @see PATCH /api/questions/:id/visibility
+ */
+export async function patchQuestionVisibility(
+  id: string,
+  visibility: QuestionVisibility
+): Promise<QuestionDetail> {
+  return fetchApi<QuestionDetail>(`/api/questions/${id}/visibility`, {
+    method: 'PATCH',
+    body: JSON.stringify({ visibility }),
+  });
 }
 
 /**

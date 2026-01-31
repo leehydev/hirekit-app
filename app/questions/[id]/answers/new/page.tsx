@@ -37,7 +37,6 @@ export default function AnswerNewPage() {
   const questionId = params.id as string;
   const { isLoading: isAuthLoading } = useRequireAuth();
   const { data: codesData } = useCodes();
-  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: question } = useQuery({
@@ -65,11 +64,10 @@ export default function AnswerNewPage() {
   const passStatusCodes = codesData?.find((g) => g.type === 'PassStatus')?.codes ?? [];
   const visibilityCodes = codesData?.find((g) => g.type === 'AnswerVisibility')?.codes ?? [];
 
-const PASS_STATUS_NONE = '__none__';
+  const PASS_STATUS_NONE = '__none__';
 
   const onSubmit = useCallback(
     async (values: FormValues) => {
-      setSubmitError(null);
       setIsSubmitting(true);
       try {
         await createAnswer(questionId, {
@@ -80,8 +78,6 @@ const PASS_STATUS_NONE = '__none__';
           visibility: values.visibility,
         });
         router.replace(`/questions/${questionId}`);
-      } catch (e) {
-        setSubmitError(e instanceof Error ? e.message : '저장 중 오류가 발생했습니다.');
       } finally {
         setIsSubmitting(false);
       }
@@ -234,11 +230,7 @@ const PASS_STATUS_NONE = '__none__';
             name="visibility"
             control={control}
             render={({ field }) => (
-              <RadioGroup
-                value={field.value}
-                onValueChange={field.onChange}
-                className="space-y-1"
-              >
+              <RadioGroup value={field.value} onValueChange={field.onChange} className="space-y-1">
                 {visibilityCodes.map((option) => {
                   const inputId = `visibility-${option.code}`;
                   return (
@@ -247,10 +239,7 @@ const PASS_STATUS_NONE = '__none__';
                       className="flex items-start gap-3 rounded-lg border border-input bg-transparent p-4 transition-colors hover:bg-input/20"
                     >
                       <RadioGroupItem value={option.code} id={inputId} className="mt-0.5" />
-                      <Label
-                        htmlFor={inputId}
-                        className="flex-1 space-y-1 cursor-pointer block"
-                      >
+                      <Label htmlFor={inputId} className="flex-1 space-y-1 cursor-pointer block">
                         <span className="text-sm font-medium text-foreground block">
                           {option.label}
                         </span>
@@ -266,12 +255,6 @@ const PASS_STATUS_NONE = '__none__';
             )}
           />
         </div>
-
-        {submitError && (
-          <p className="text-destructive text-xs" role="alert">
-            {submitError}
-          </p>
-        )}
 
         {/* 하단 버튼 */}
         <div className="flex gap-3 pt-4">

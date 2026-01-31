@@ -18,10 +18,10 @@ function ServerErrorContent() {
         문제가 계속되면 문의해 주세요.
       </p>
       <Link
-        href="/"
+        href="/feed"
         className="text-primary mt-8 text-sm font-medium underline underline-offset-4"
       >
-        홈으로 돌아가기
+        피드로 돌아가기
       </Link>
     </div>
   );
@@ -42,10 +42,10 @@ function ServerErrorFallback() {
         문제가 계속되면 문의해 주세요.
       </p>
       <Link
-        href="/"
+        href="/feed"
         className="text-primary mt-8 text-sm font-medium underline underline-offset-4"
       >
-        홈으로 돌아가기
+        피드로 돌아가기
       </Link>
     </div>
   );

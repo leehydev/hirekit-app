@@ -8,6 +8,9 @@ import {
   QuestionContent,
   AnswerList,
   ShareAnswerToUnlockModal,
+  EditQuestionModal,
+  DeleteQuestionDialog,
+  VisibilityQuestionDialog,
 } from '@/components/Question';
 import {
   getQuestionDetail,
@@ -31,6 +34,9 @@ export default function QuestionDetailPage() {
   const setBottomNavVisible = useNavigationStore((s) => s.setBottomNavVisible);
   const [sortBy] = useState<'latest' | 'most-liked'>('latest');
   const queryClient = useQueryClient();
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [visibilityDialogOpen, setVisibilityDialogOpen] = useState(false);
 
   useEffect(() => {
     setBottomNavVisible(false);
@@ -154,11 +160,35 @@ export default function QuestionDetailPage() {
   }
 
   const allAnswers = answersData?.pages.flatMap((p) => p.items) ?? [];
+  const isAuthor = !!user && user.id === question.authorId;
+  const hasAnswers = allAnswers.length > 0;
 
   return (
     <div className="min-h-screen bg-background pb-8">
       {isLoggedIn && <ShareAnswerToUnlockModal questionId={id} />}
-      <QuestionDetailHeader questionId={id} />
+      <QuestionDetailHeader
+        questionId={id}
+        isAuthor={isAuthor}
+        hasAnswers={hasAnswers}
+        onEditClick={() => setEditModalOpen(true)}
+        onDeleteClick={() => setDeleteDialogOpen(true)}
+        onVisibilityClick={() => setVisibilityDialogOpen(true)}
+      />
+      <EditQuestionModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        question={question}
+      />
+      <DeleteQuestionDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        questionId={id}
+      />
+      <VisibilityQuestionDialog
+        open={visibilityDialogOpen}
+        onOpenChange={setVisibilityDialogOpen}
+        question={question}
+      />
 
       <div className="px-4 py-6 space-y-6">
         {/* 질문 상세 */}

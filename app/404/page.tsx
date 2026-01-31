@@ -13,10 +13,10 @@ export default function NotFoundPage() {
         요청한 주소가 없거나 변경되었을 수 있어요.
       </p>
       <Link
-        href="/"
+        href="/feed"
         className="text-primary mt-8 text-sm font-medium underline underline-offset-4"
       >
-        홈으로 돌아가기
+        피드로 돌아가기
       </Link>
     </div>
   );

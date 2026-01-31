@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import {
   Dialog,
@@ -27,6 +26,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { createCompany, createQuestion } from '@/lib/api';
+import { toast } from 'sonner';
 import type { CompanyResponse } from '@/lib/api';
 import { useCodes } from '@/hooks/useCodes';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
@@ -101,8 +101,16 @@ export default function QuestionNewPage() {
           content: values.content,
           visibility: values.visibility,
         });
-        setCreatedQuestionId(question.id);
-        setAnswerConfirmOpen(true);
+        const id =
+          (question as { id?: string; data?: { id?: string } } | null)?.id ??
+          (question as { data?: { id?: string } } | null)?.data?.id;
+        if (id) {
+          setCreatedQuestionId(id);
+          setAnswerConfirmOpen(true);
+        } else {
+          toast.success('질문이 등록되었습니다.');
+          router.replace('/feed');
+        }
       } catch (e) {
         setSubmitError(e instanceof Error ? e.message : '저장 중 오류가 발생했습니다.');
       } finally {
@@ -258,6 +266,11 @@ export default function QuestionNewPage() {
                 </RadioGroup>
               )}
             />
+            {methods.watch('visibility') === 'PRIVATE' && (
+              <p className="text-xs text-muted-foreground">
+                비공개글은 마이페이지에서 조회 및 관리가 가능합니다.
+              </p>
+            )}
           </div>
 
           {submitError && (

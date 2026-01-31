@@ -29,6 +29,9 @@ export {
 export {
   getQuestionDetail,
   createQuestion,
+  updateQuestion,
+  deleteQuestion,
+  patchQuestionVisibility,
   createAnswer,
   getAnswers,
   toggleAnswerLike,
@@ -36,6 +39,7 @@ export {
   questionKeys,
   type QuestionDetail,
   type CreateQuestionRequest,
+  type UpdateQuestionRequest,
   type CreateAnswerRequest,
   type QuestionVisibility,
   type Answer,
