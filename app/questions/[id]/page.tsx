@@ -11,6 +11,9 @@ import {
   EditQuestionModal,
   DeleteQuestionDialog,
   VisibilityQuestionDialog,
+  EditAnswerModal,
+  DeleteAnswerDialog,
+  VisibilityAnswerDialog,
 } from '@/components/Question';
 import {
   getQuestionDetail,
@@ -37,6 +40,10 @@ export default function QuestionDetailPage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [visibilityDialogOpen, setVisibilityDialogOpen] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<Answer | null>(null);
+  const [answerEditOpen, setAnswerEditOpen] = useState(false);
+  const [answerDeleteOpen, setAnswerDeleteOpen] = useState(false);
+  const [answerVisibilityOpen, setAnswerVisibilityOpen] = useState(false);
 
   useEffect(() => {
     setBottomNavVisible(false);
@@ -190,9 +197,35 @@ export default function QuestionDetailPage() {
         question={question}
       />
 
+      {selectedAnswer && (
+        <>
+          <EditAnswerModal
+            open={answerEditOpen}
+            onOpenChange={setAnswerEditOpen}
+            questionId={id}
+            answer={selectedAnswer}
+            onSuccess={() => setSelectedAnswer(null)}
+          />
+          <DeleteAnswerDialog
+            open={answerDeleteOpen}
+            onOpenChange={setAnswerDeleteOpen}
+            questionId={id}
+            answerId={selectedAnswer.id}
+            onSuccess={() => setSelectedAnswer(null)}
+          />
+          <VisibilityAnswerDialog
+            open={answerVisibilityOpen}
+            onOpenChange={setAnswerVisibilityOpen}
+            questionId={id}
+            answer={selectedAnswer}
+            onSuccess={() => setSelectedAnswer(null)}
+          />
+        </>
+      )}
+
       <div className="px-4 py-6 space-y-6">
         {/* 질문 상세 */}
-        <QuestionContent question={question} isLoggedIn={isLoggedIn} />
+        <QuestionContent question={question} isLoggedIn={isLoggedIn} isQuestionAuthor={isAuthor} />
 
         {/* 답변 목록 섹션 */}
         <div className="space-y-4">
@@ -224,6 +257,20 @@ export default function QuestionDetailPage() {
                 isLoadingMore={isFetchingNextPage}
                 onLike={handleLike}
                 membersOnlyCount={membersOnlyCount}
+                currentUserId={user?.id}
+                questionId={id}
+                onAnswerEdit={(answer) => {
+                  setSelectedAnswer(answer);
+                  setAnswerEditOpen(true);
+                }}
+                onAnswerDelete={(answer) => {
+                  setSelectedAnswer(answer);
+                  setAnswerDeleteOpen(true);
+                }}
+                onAnswerVisibility={(answer) => {
+                  setSelectedAnswer(answer);
+                  setAnswerVisibilityOpen(true);
+                }}
               />
               {allAnswers.length > 0 && membersOnlyCount > 0 && (
                 <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-center">

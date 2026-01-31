@@ -116,7 +116,7 @@ function FeedPageContent() {
       return <p className="text-muted-foreground text-sm py-8 text-center">아직 질문이 없어요.</p>;
     }
     return displayItems.map((item) => (
-      <FeedItemCard key={item.question.id} item={item} isLoggedIn={isLoggedIn} />
+      <FeedItemCard key={item.question.id} item={item} isLoggedIn={isLoggedIn} currentUserId={user?.id} />
     ));
   }
 

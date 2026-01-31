@@ -1,6 +1,6 @@
 'use client';
 
-import { Lightbulb, Pencil } from 'lucide-react';
+import { Lightbulb, Pencil, User } from 'lucide-react';
 import Link from 'next/link';
 import type { FeedItemResponse } from '@/lib/api/feed';
 import { formatTimeAgo, formatAnswerCount } from '@/lib/formatters';
@@ -12,13 +12,16 @@ import { Button } from '@/components/ui/button';
 interface FeedItemCardProps {
   item: FeedItemResponse;
   isLoggedIn?: boolean;
+  /** 현재 로그인한 사용자 ID – 질문 작성자일 때 "내가 쓴 글" 뱃지 표시 */
+  currentUserId?: string;
 }
 
-export function FeedItemCard({ item, isLoggedIn }: FeedItemCardProps) {
+export function FeedItemCard({ item, isLoggedIn, currentUserId }: FeedItemCardProps) {
   const { getLabel } = useCodes();
   const { question, representativeAnswer, answerCounts } = item;
   const jobLabel = getLabel('Job', question.job);
   const authorLabel = question.authorHidden ? '익명' : '익명'; // API에서 작성자명 미제공 시 익명
+  const isQuestionAuthor = !!currentUserId && question.authorId === currentUserId;
   const status =
     representativeAnswer?.passStatus === 'PASS'
       ? 'passed'
@@ -42,6 +45,12 @@ export function FeedItemCard({ item, isLoggedIn }: FeedItemCardProps) {
       {/* 태그 및 작성 시간 */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 flex-wrap">
+          {isQuestionAuthor && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+              <User className="size-3.5" />
+              내가 쓴 글
+            </span>
+          )}
           <QuestionTag label={question.companyName} variant="company" />
           <QuestionTag label={jobLabel} variant="category" />
           <span className="text-muted-foreground text-xs">{authorLabel}</span>
@@ -91,7 +100,9 @@ export function FeedItemCard({ item, isLoggedIn }: FeedItemCardProps) {
             href={`/questions/${question.id}`}
             className="text-sm font-medium text-primary hover:underline"
           >
-            {formatAnswerCount(answerCounts.totalAnswerCount)}
+            {formatAnswerCount(
+              answerCounts.publicAnswerCount + answerCounts.membersOnlyAnswerCount,
+            )}
           </Link>
           <Button size="sm" variant="outline" className="gap-1.5" asChild>
             <Link href={`/questions/${question.id}/answers/new`}>
