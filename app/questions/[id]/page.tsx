@@ -8,6 +8,12 @@ import {
   QuestionContent,
   AnswerList,
   ShareAnswerToUnlockModal,
+  EditQuestionModal,
+  DeleteQuestionDialog,
+  VisibilityQuestionDialog,
+  EditAnswerModal,
+  DeleteAnswerDialog,
+  VisibilityAnswerDialog,
 } from '@/components/Question';
 import {
   getQuestionDetail,
@@ -31,6 +37,13 @@ export default function QuestionDetailPage() {
   const setBottomNavVisible = useNavigationStore((s) => s.setBottomNavVisible);
   const [sortBy] = useState<'latest' | 'most-liked'>('latest');
   const queryClient = useQueryClient();
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [visibilityDialogOpen, setVisibilityDialogOpen] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<Answer | null>(null);
+  const [answerEditOpen, setAnswerEditOpen] = useState(false);
+  const [answerDeleteOpen, setAnswerDeleteOpen] = useState(false);
+  const [answerVisibilityOpen, setAnswerVisibilityOpen] = useState(false);
 
   useEffect(() => {
     setBottomNavVisible(false);
@@ -78,8 +91,9 @@ export default function QuestionDetailPage() {
 
   // 좋아요 토글 mutation
   const likeMutation = useMutation({
-    mutationFn: toggleAnswerLike,
-    onMutate: async (answerId) => {
+    mutationFn: ({ answerId }: { answerId: string }) =>
+      toggleAnswerLike(id, answerId),
+    onMutate: async ({ answerId }) => {
       // Optimistic update
       await queryClient.cancelQueries({ queryKey: questionKeys.answers(id, sortBy) });
 
@@ -122,7 +136,7 @@ export default function QuestionDetailPage() {
       router.push('/login');
       return;
     }
-    likeMutation.mutate(answerId);
+    likeMutation.mutate({ answerId });
   };
 
   // 로딩 상태
@@ -153,15 +167,65 @@ export default function QuestionDetailPage() {
   }
 
   const allAnswers = answersData?.pages.flatMap((p) => p.items) ?? [];
+  const isAuthor = !!user && user.id === question.authorId;
+  const hasAnswers = allAnswers.length > 0;
 
   return (
     <div className="min-h-screen bg-background pb-8">
       {isLoggedIn && <ShareAnswerToUnlockModal questionId={id} />}
-      <QuestionDetailHeader questionId={id} />
+      <QuestionDetailHeader
+        questionId={id}
+        isAuthor={isAuthor}
+        hasAnswers={hasAnswers}
+        onEditClick={() => setEditModalOpen(true)}
+        onDeleteClick={() => setDeleteDialogOpen(true)}
+        onVisibilityClick={() => setVisibilityDialogOpen(true)}
+      />
+      <EditQuestionModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        question={question}
+      />
+      <DeleteQuestionDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        questionId={id}
+      />
+      <VisibilityQuestionDialog
+        open={visibilityDialogOpen}
+        onOpenChange={setVisibilityDialogOpen}
+        question={question}
+      />
+
+      {selectedAnswer && (
+        <>
+          <EditAnswerModal
+            open={answerEditOpen}
+            onOpenChange={setAnswerEditOpen}
+            questionId={id}
+            answer={selectedAnswer}
+            onSuccess={() => setSelectedAnswer(null)}
+          />
+          <DeleteAnswerDialog
+            open={answerDeleteOpen}
+            onOpenChange={setAnswerDeleteOpen}
+            questionId={id}
+            answerId={selectedAnswer.id}
+            onSuccess={() => setSelectedAnswer(null)}
+          />
+          <VisibilityAnswerDialog
+            open={answerVisibilityOpen}
+            onOpenChange={setAnswerVisibilityOpen}
+            questionId={id}
+            answer={selectedAnswer}
+            onSuccess={() => setSelectedAnswer(null)}
+          />
+        </>
+      )}
 
       <div className="px-4 py-6 space-y-6">
         {/* 질문 상세 */}
-        <QuestionContent question={question} isLoggedIn={isLoggedIn} />
+        <QuestionContent question={question} isLoggedIn={isLoggedIn} isQuestionAuthor={isAuthor} />
 
         {/* 답변 목록 섹션 */}
         <div className="space-y-4">
@@ -193,6 +257,20 @@ export default function QuestionDetailPage() {
                 isLoadingMore={isFetchingNextPage}
                 onLike={handleLike}
                 membersOnlyCount={membersOnlyCount}
+                currentUserId={user?.id}
+                questionId={id}
+                onAnswerEdit={(answer) => {
+                  setSelectedAnswer(answer);
+                  setAnswerEditOpen(true);
+                }}
+                onAnswerDelete={(answer) => {
+                  setSelectedAnswer(answer);
+                  setAnswerDeleteOpen(true);
+                }}
+                onAnswerVisibility={(answer) => {
+                  setSelectedAnswer(answer);
+                  setAnswerVisibilityOpen(true);
+                }}
               />
               {allAnswers.length > 0 && membersOnlyCount > 0 && (
                 <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-center">

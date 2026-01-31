@@ -1,6 +1,6 @@
 /**
- * 미들웨어용 인증 설정·헬퍼
- * middleware.ts에서 import하여 사용.
+ * 프록시(인증)용 설정·헬퍼
+ * proxy.ts에서 import하여 사용.
  */
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';

@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, PenSquare, SquareUser, Settings } from 'lucide-react';
+import { Home, PenSquare, SquareUser, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/feed', label: 'Feed', icon: Home },
   { href: '/questions/new', label: '새 글 작성', icon: PenSquare },
   { href: '/profile', label: 'Profile', icon: SquareUser },
-  { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '/my', label: 'My', icon: User },
 ];
 
 export function BottomNav() {

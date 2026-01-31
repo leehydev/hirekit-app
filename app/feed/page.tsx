@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
@@ -22,7 +22,7 @@ import { useCodes } from '@/hooks/useCodes';
 
 const PAGE_SIZE = 5;
 
-export default function FeedPage() {
+function FeedPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -116,7 +116,7 @@ export default function FeedPage() {
       return <p className="text-muted-foreground text-sm py-8 text-center">아직 질문이 없어요.</p>;
     }
     return displayItems.map((item) => (
-      <FeedItemCard key={item.question.id} item={item} isLoggedIn={isLoggedIn} />
+      <FeedItemCard key={item.question.id} item={item} isLoggedIn={isLoggedIn} currentUserId={user?.id} />
     ));
   }
 
@@ -163,5 +163,13 @@ export default function FeedPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function FeedPage() {
+  return (
+    <Suspense fallback={<p className="py-8 text-center text-sm text-muted-foreground">로딩 중…</p>}>
+      <FeedPageContent />
+    </Suspense>
   );
 }

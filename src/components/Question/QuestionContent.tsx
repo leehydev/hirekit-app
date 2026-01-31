@@ -1,6 +1,6 @@
 import { QuestionTag } from '@/components/Feed/QuestionTag';
 import { Button } from '@/components/ui/button';
-import { Pencil } from 'lucide-react';
+import { Pencil, User } from 'lucide-react';
 import Link from 'next/link';
 import { formatTimeAgo } from '@/lib/formatters';
 import { useCodes } from '@/hooks/useCodes';
@@ -9,9 +9,11 @@ import type { QuestionDetail } from '@/lib/api/questions';
 interface QuestionContentProps {
   question: QuestionDetail;
   isLoggedIn: boolean;
+  /** 질문 작성자 본인일 때 true – "내가 쓴 글" 뱃지 표시 */
+  isQuestionAuthor?: boolean;
 }
 
-export function QuestionContent({ question, isLoggedIn }: QuestionContentProps) {
+export function QuestionContent({ question, isLoggedIn, isQuestionAuthor }: QuestionContentProps) {
   const { getLabel } = useCodes();
   const jobLabel = getLabel('Job', question.job);
   const authorLabel = question.authorHidden ? '익명' : question.authorName ?? '익명';
@@ -21,6 +23,12 @@ export function QuestionContent({ question, isLoggedIn }: QuestionContentProps) 
       {/* 태그 및 시간 */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
+          {isQuestionAuthor && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary">
+              <User className="size-3.5" />
+              내가 쓴 글
+            </span>
+          )}
           <QuestionTag label={question.companyName} variant="company" />
           <QuestionTag label={jobLabel} variant="category" />
         </div>

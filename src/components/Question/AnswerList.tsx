@@ -14,6 +14,13 @@ interface AnswerListProps {
   onLike?: (answerId: string) => void;
   /** 비로그인 시 볼 수 없는 회원전용 답변 개수 (빈 목록일 때 문구 분기용) */
   membersOnlyCount?: number;
+  /** 현재 로그인한 사용자 ID – 본인 답변에 수정/삭제/공개설정 메뉴 표시 */
+  currentUserId?: string;
+  /** 질문 ID – 답변 수정/삭제/공개설정 시 필요 */
+  questionId?: string;
+  onAnswerEdit?: (answer: Answer) => void;
+  onAnswerDelete?: (answer: Answer) => void;
+  onAnswerVisibility?: (answer: Answer) => void;
 }
 
 export function AnswerList({
@@ -24,6 +31,11 @@ export function AnswerList({
   isLoadingMore,
   onLike,
   membersOnlyCount = 0,
+  currentUserId,
+  questionId,
+  onAnswerEdit,
+  onAnswerDelete,
+  onAnswerVisibility,
 }: AnswerListProps) {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -81,7 +93,18 @@ export function AnswerList({
   return (
     <div className="space-y-4">
       {answers.map((answer) => (
-        <AnswerCard key={answer.id} answer={answer} isLoggedIn={isLoggedIn} onLike={onLike} />
+        <AnswerCard
+          key={answer.id}
+          answer={answer}
+          isLoggedIn={isLoggedIn}
+          onLike={onLike}
+          isAnswerAuthor={
+            !!currentUserId && !!answer.authorId && answer.authorId === currentUserId
+          }
+          onEdit={onAnswerEdit}
+          onDelete={onAnswerDelete}
+          onVisibility={onAnswerVisibility}
+        />
       ))}
 
       <div ref={loadMoreRef} className="h-4" aria-hidden />
