@@ -235,23 +235,26 @@ export default function QuestionNewPage() {
                   onValueChange={field.onChange}
                   className="space-y-1"
                 >
-                  {visibilityCodes.map((option) => (
-                    <div
-                      key={option.code}
-                      className="flex items-start gap-3 rounded-lg border border-input bg-transparent p-4 transition-colors hover:bg-input/20"
-                    >
-                      <RadioGroupItem value={option.code} className="mt-0.5" />
-                      <div className="flex-1 space-y-1">
-                        <Label className="text-sm font-medium text-foreground cursor-pointer">
-                          {option.label}
+                  {visibilityCodes.map((option) => {
+                    const inputId = `question-visibility-${option.code}`;
+                    return (
+                      <div
+                        key={option.code}
+                        className="flex items-start gap-3 rounded-lg border border-input bg-transparent p-4 transition-colors hover:bg-input/20"
+                      >
+                        <RadioGroupItem value={option.code} id={inputId} className="mt-0.5" />
+                        <Label htmlFor={inputId} className="flex-1 space-y-1 cursor-pointer block">
+                          <span className="text-sm font-medium text-foreground block">
+                            {option.label}
+                          </span>
+                          <span className="text-xs text-muted-foreground block">
+                            {option.code === 'PUBLIC' && '모든 사용자가 볼 수 있습니다.'}
+                            {option.code === 'PRIVATE' && '나만 볼 수 있습니다.'}
+                          </span>
                         </Label>
-                        <p className="text-xs text-muted-foreground">
-                          {option.code === 'PUBLIC' && '모든 사용자가 볼 수 있습니다.'}
-                          {option.code === 'PRIVATE' && '나만 볼 수 있습니다.'}
-                        </p>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </RadioGroup>
               )}
             />

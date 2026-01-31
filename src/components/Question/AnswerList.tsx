@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { AnswerCard } from './AnswerCard';
 import type { Answer } from '@/lib/api/questions';
 
@@ -11,6 +12,8 @@ interface AnswerListProps {
   hasMore?: boolean;
   isLoadingMore?: boolean;
   onLike?: (answerId: string) => void;
+  /** 비로그인 시 볼 수 없는 회원전용 답변 개수 (빈 목록일 때 문구 분기용) */
+  membersOnlyCount?: number;
 }
 
 export function AnswerList({
@@ -20,6 +23,7 @@ export function AnswerList({
   hasMore,
   isLoadingMore,
   onLike,
+  membersOnlyCount = 0,
 }: AnswerListProps) {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -41,6 +45,25 @@ export function AnswerList({
   }, [hasMore, isLoadingMore, onLoadMore]);
 
   if (answers.length === 0) {
+    // 공개 답변 0개 + 회원전용만 있을 때 (비로그인)
+    if (!isLoggedIn && membersOnlyCount > 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground text-sm">
+            회원전용 답변이 {membersOnlyCount}개 있어요.
+          </p>
+          <p className="text-muted-foreground text-xs mt-2">
+            <Link
+              href="/login"
+              className="font-medium text-primary underline underline-offset-2 hover:no-underline"
+            >
+              로그인
+            </Link>
+            하면 확인할 수 있어요.
+          </p>
+        </div>
+      );
+    }
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground text-sm">아직 답변이 없어요.</p>

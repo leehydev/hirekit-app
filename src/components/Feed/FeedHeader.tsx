@@ -1,6 +1,7 @@
-import { Search, CircleUser } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { FeedHeaderMenu } from './FeedHeaderMenu';
 
 export function FeedHeader() {
   return (
@@ -21,16 +22,10 @@ export function FeedHeader() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <button className="p-2 rounded-lg hover:bg-accent transition-colors" aria-label="검색">
+          <button type="button" className="p-2 rounded-lg hover:bg-accent transition-colors" aria-label="검색">
             <Search className="size-5 text-foreground" />
           </button>
-          <Link
-            href="/profile"
-            className="p-2 rounded-lg hover:bg-accent transition-colors"
-            aria-label="프로필"
-          >
-            <CircleUser className="size-6 text-foreground" />
-          </Link>
+          <FeedHeaderMenu />
         </div>
       </div>
     </header>

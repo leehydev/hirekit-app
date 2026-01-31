@@ -7,6 +7,7 @@ import { QuestionDetailHeader, QuestionContent, AnswerList } from '@/components/
 import {
   getQuestionDetail,
   getAnswers,
+  getMembersOnlyAnswerCount,
   toggleAnswerLike,
   questionKeys,
   Answer,
@@ -40,6 +41,15 @@ export default function QuestionDetailPage() {
     queryFn: () => getQuestionDetail(id),
     retry: false,
   });
+
+  // 비로그인 시 회원전용 답변 개수 (볼 수 없는 답변 수)
+  const { data: membersOnlyCountData } = useQuery({
+    queryKey: questionKeys.membersOnlyCount(id),
+    queryFn: () => getMembersOnlyAnswerCount(id),
+    enabled: !isLoggedIn && !!question,
+    retry: false,
+  });
+  const membersOnlyCount = membersOnlyCountData?.count ?? 0;
 
   // 답변 목록 조회 (무한스크롤)
   const {
@@ -150,7 +160,13 @@ export default function QuestionDetailPage() {
         {/* 답변 목록 섹션 */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-foreground">답변 {allAnswers.length}개</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              답변
+              {!isLoggedIn && membersOnlyCount > 0
+                ? membersOnlyCount + allAnswers.length
+                : allAnswers.length}
+              개
+            </h2>
 
             {/* 정렬 탭 */}
             {/* <Tabs value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
@@ -165,14 +181,31 @@ export default function QuestionDetailPage() {
           {isAnswersLoading ? (
             <p className="text-center text-sm text-muted-foreground py-8">답변을 불러오는 중…</p>
           ) : (
-            <AnswerList
-              answers={allAnswers}
-              isLoggedIn={isLoggedIn}
-              onLoadMore={fetchNextPage}
-              hasMore={hasNextPage}
-              isLoadingMore={isFetchingNextPage}
-              onLike={handleLike}
-            />
+            <>
+              <AnswerList
+                answers={allAnswers}
+                isLoggedIn={isLoggedIn}
+                onLoadMore={fetchNextPage}
+                hasMore={hasNextPage}
+                isLoadingMore={isFetchingNextPage}
+                onLike={handleLike}
+                membersOnlyCount={membersOnlyCount}
+              />
+              {!isLoggedIn && allAnswers.length > 0 && membersOnlyCount > 0 && (
+                <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    <button
+                      type="button"
+                      onClick={() => router.push('/login')}
+                      className="font-medium text-primary underline underline-offset-2 hover:no-underline"
+                    >
+                      로그인
+                    </button>
+                    하고 {membersOnlyCount}개의 답변을 더 확인해보세요.
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

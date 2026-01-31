@@ -1,9 +1,8 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
 import { Suspense, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { userKeys } from '@/lib/api';
+import { useUserStore } from '@/store/user';
 import { useNavigationStore } from '@/store/navigation';
 
 /** return_to가 앱 내부 경로인지 검증 (오픈 리다이렉트 방지) */
@@ -19,9 +18,9 @@ function getValidReturnTo(value: string | null): string | null {
 function OAuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const queryClient = useQueryClient();
   const hideBottomNav = useNavigationStore((s) => s.hideBottomNav);
   const showBottomNav = useNavigationStore((s) => s.showBottomNav);
+  const fetchUser = useUserStore((s) => s.fetchUser);
 
   const isProcessed = useRef(false);
 
@@ -44,10 +43,9 @@ function OAuthCallbackContent() {
       const loginUrl = returnTo ? `/login?from=${encodeURIComponent(returnTo)}` : '/login';
       router.replace(loginUrl);
     } else {
-      queryClient.invalidateQueries({ queryKey: userKeys.me() });
-      router.replace(returnTo ?? '/');
+      fetchUser().then(() => router.replace(returnTo ?? '/'));
     }
-  }, [queryClient, searchParams, router]);
+  }, [fetchUser, searchParams, router]);
 
   return (
     <div
