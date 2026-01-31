@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
@@ -22,7 +22,7 @@ import { useCodes } from '@/hooks/useCodes';
 
 const PAGE_SIZE = 5;
 
-export default function FeedPage() {
+function FeedPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -163,5 +163,13 @@ export default function FeedPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function FeedPage() {
+  return (
+    <Suspense fallback={<p className="py-8 text-center text-sm text-muted-foreground">로딩 중…</p>}>
+      <FeedPageContent />
+    </Suspense>
   );
 }

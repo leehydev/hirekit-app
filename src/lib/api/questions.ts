@@ -115,12 +115,16 @@ export async function getAnswers(
 
 /**
  * 답변 좋아요 토글
- * @see POST /api/answers/:id/like
+ * @see POST /api/questions/:questionId/answers/:answerId/like
  */
-export async function toggleAnswerLike(answerId: string): Promise<void> {
-  return fetchApi<void>(`/api/answers/${answerId}/like`, {
-    method: 'POST',
-  });
+export async function toggleAnswerLike(
+  questionId: string,
+  answerId: string
+): Promise<void> {
+  return fetchApi<void>(
+    `/api/questions/${questionId}/answers/${answerId}/like`,
+    { method: 'POST' }
+  );
 }
 
 /**

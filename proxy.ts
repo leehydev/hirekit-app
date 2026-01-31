@@ -1,5 +1,5 @@
 /**
- * 인증 미들웨어
+ * 인증 프록시
  *
  * - 공개 경로(PUBLIC_PATHS 등)는 인증 없이 통과.
  * - 비공개 경로: 리프레시 토큰 없으면 → 로그인 페이지, 액세스 없/만료면 → refresh 후 /me 검사.
@@ -17,7 +17,7 @@ import {
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // 1. 공개 경로면 인증 검사 없이 통과
   if (isPublicPath(request.nextUrl.pathname)) {
     return NextResponse.next();

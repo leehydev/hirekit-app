@@ -78,8 +78,9 @@ export default function QuestionDetailPage() {
 
   // 좋아요 토글 mutation
   const likeMutation = useMutation({
-    mutationFn: toggleAnswerLike,
-    onMutate: async (answerId) => {
+    mutationFn: ({ answerId }: { answerId: string }) =>
+      toggleAnswerLike(id, answerId),
+    onMutate: async ({ answerId }) => {
       // Optimistic update
       await queryClient.cancelQueries({ queryKey: questionKeys.answers(id, sortBy) });
 
@@ -122,7 +123,7 @@ export default function QuestionDetailPage() {
       router.push('/login');
       return;
     }
-    likeMutation.mutate(answerId);
+    likeMutation.mutate({ answerId });
   };
 
   // 로딩 상태
