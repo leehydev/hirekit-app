@@ -4,8 +4,10 @@ export { fetchApi } from './client';
 export { getMe, userKeys, type User } from './users';
 export {
   searchCompanies,
+  createCompany,
   companyKeys,
   type CompanyResponse,
+  type CreateCompanyRequest,
   type PageResponse,
 } from './companies';
 export {
@@ -26,10 +28,13 @@ export {
 } from './feed';
 export {
   getQuestionDetail,
+  createQuestion,
   getAnswers,
   toggleAnswerLike,
   questionKeys,
   type QuestionDetail,
+  type CreateQuestionRequest,
+  type QuestionVisibility,
   type Answer,
   type GetAnswersParams,
   type CursorAnswersResponse,

@@ -111,11 +111,11 @@ export default function FeedPage() {
         <Tabs value={sortBy} onValueChange={(v) => setSortBy(v as SortBy)}>
           <div className="flex items-center justify-between gap-4">
             <Select value={job} onValueChange={setJob}>
-              <SelectTrigger className="w-full max-w-[200px]">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="직무" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
+                <SelectItem value="all">직무 전체</SelectItem>
                 {jobCodes.map((c) => (
                   <SelectItem key={c.code} value={c.code}>
                     {c.label}
@@ -128,7 +128,6 @@ export default function FeedPage() {
               <TabsTrigger value="latest">최신순</TabsTrigger>
               <TabsTrigger value="most-answers">답변 많은 순</TabsTrigger>
             </TabsList> */}
-            <span className="text-sm text-muted-foreground">최신순</span>
           </div>
 
           <TabsContent value="latest" className="space-y-4 mt-4">
@@ -145,24 +144,6 @@ export default function FeedPage() {
           <p className="text-muted-foreground text-sm py-4 text-center">더 불러오는 중…</p>
         )}
       </div>
-
-      {/* 새 글 작성 FAB */}
-      <button
-        className="fixed right-4 bottom-24 z-50 flex items-center gap-2 px-5 py-3 rounded-full font-medium text-white shadow-lg transition-all hover:shadow-xl active:scale-95"
-        style={{
-          backgroundColor: 'var(--feed-accent-blue)',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = 'var(--feed-accent-blue-hover)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'var(--feed-accent-blue)';
-        }}
-        aria-label="새 글 작성"
-      >
-        <Plus className="size-5" />
-        <span>새 글 작성</span>
-      </button>
     </div>
   );
 }
