@@ -2,14 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, MessageSquare, Briefcase, Bell, User } from 'lucide-react';
+import { Home, Search, User, SquareUser } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/feed', label: 'Feed', icon: Home },
-  { href: '/interview', label: 'Interview', icon: MessageSquare },
-  { href: '/jobs', label: 'Jobs', icon: Briefcase },
-  { href: '/alerts', label: 'Alerts', icon: Bell },
+  { href: '/search', label: 'Search', icon: Search },
+  { href: '/profile', label: 'Profile', icon: SquareUser },
   { href: '/me', label: 'Me', icon: User },
 ];
 
@@ -32,7 +31,7 @@ export function BottomNav() {
               'flex flex-col items-center gap-1 rounded-lg px-3 py-2 text-xs transition-colors min-w-0',
               isActive
                 ? 'text-(--feed-accent-blue)'
-                : 'text-muted-foreground hover:text-foreground'
+                : 'text-muted-foreground hover:text-foreground',
             )}
             aria-current={isActive ? 'page' : undefined}
           >

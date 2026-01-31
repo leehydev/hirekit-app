@@ -43,6 +43,7 @@ export interface CursorFeedResponse {
 
 export interface GetFeedParams {
   companyId?: string;
+  job?: string;
   cursor?: string;
   size?: number;
 }
@@ -56,6 +57,7 @@ export async function getFeed(
 ): Promise<CursorFeedResponse> {
   const search = new URLSearchParams();
   if (params.companyId) search.set('companyId', params.companyId);
+  if (params.job) search.set('job', params.job);
   if (params.cursor) search.set('cursor', params.cursor);
   if (params.size != null) search.set('size', String(params.size));
   const query = search.toString();

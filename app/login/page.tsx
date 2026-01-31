@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { API_URL } from '@/lib/api';
 import { useNavigationStore } from '@/store/navigation';
 import { LoginButton, AppLogo } from '@/components/Login';
@@ -9,10 +10,15 @@ import Image from 'next/image';
 /**
  * 로그인 페이지
  * 카카오, 네이버, 구글 로그인 버튼 제공
+ * 미들웨어에서 리다이렉트 시 from 쿼리로 복귀 경로가 넘어오면, OAuth 진입 시 return_to로 전달
  */
 export default function LoginPage() {
+  const searchParams = useSearchParams();
   const hideBottomNav = useNavigationStore((s) => s.hideBottomNav);
   const showBottomNav = useNavigationStore((s) => s.showBottomNav);
+
+  /** 로그인 후 돌아갈 경로 (미들웨어가 from 쿼리로 넘김) */
+  const returnTo = searchParams.get('from') ?? '/';
 
   useEffect(() => {
     hideBottomNav();
@@ -21,10 +27,12 @@ export default function LoginPage() {
 
   /**
    * 카카오 로그인 버튼 클릭 시 실행
-   * 백엔드의 OAuth2 인증 URL로 이동
+   * 백엔드 OAuth2 진입 URL로 이동. return_to는 백엔드가 검증 후 쿠키에 저장하고, 콜백 시 리다이렉트 URL에 붙여줌.
    */
   const handleKakaoLogin = () => {
-    window.location.href = `${API_URL}/oauth2/authorization/kakao`;
+    const url = new URL(`${API_URL}/oauth2/authorization/kakao`);
+    url.searchParams.set('return_to', returnTo);
+    window.location.href = url.toString();
   };
 
   return (

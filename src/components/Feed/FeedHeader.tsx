@@ -8,24 +8,20 @@ export function FeedHeader() {
       <div className="flex items-center justify-between px-4 py-3">
         {/* Logo */}
         <Link href="/feed" className="flex items-center gap-2">
-          <div className="relative size-10">
+          <div className="relative w-28 h-8">
             <Image
-              src="/hirekit/icon-large.png"
+              src="/hirekit/logo.png"
               alt="HireKit"
-              width={40}
-              height={40}
+              width={100}
+              height={100}
               className="rounded-lg"
             />
           </div>
-          <h1 className="text-lg font-semibold text-foreground">면접 Q&A</h1>
         </Link>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <button
-            className="p-2 rounded-lg hover:bg-accent transition-colors"
-            aria-label="검색"
-          >
+          <button className="p-2 rounded-lg hover:bg-accent transition-colors" aria-label="검색">
             <Search className="size-5 text-foreground" />
           </button>
           <Link

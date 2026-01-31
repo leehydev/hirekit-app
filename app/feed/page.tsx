@@ -17,6 +17,7 @@ import { getFeed, feedKeys, type FeedItemResponse } from '@/lib/api';
 import { SortBy } from '@/types/feed';
 import { useNavigationStore } from '@/store/navigation';
 import { useUser } from '@/hooks/useUser';
+import { useCodes } from '@/hooks/useCodes';
 
 const PAGE_SIZE = 5;
 
@@ -25,21 +26,23 @@ export default function FeedPage() {
   const { data: user, isLoading: isUserLoading } = useUser();
   const isLoggedIn = !!user;
 
-  const [companyId, setCompanyId] = useState<string>('all');
+  const [job, setJob] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortBy>('latest');
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const { data: codesData } = useCodes();
+  const jobCodes = codesData?.find((g) => g.type === 'Job')?.codes ?? [];
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useInfiniteQuery({
       queryKey: [
         ...feedKeys.list({
-          companyId: companyId === 'all' ? undefined : companyId,
+          job: job === 'all' ? undefined : job,
           size: PAGE_SIZE,
         }),
       ],
       queryFn: ({ pageParam }) =>
         getFeed({
-          companyId: companyId === 'all' ? undefined : companyId,
+          job: job === 'all' ? undefined : job,
           cursor: pageParam as string | undefined,
           size: PAGE_SIZE,
         }),
@@ -104,24 +107,29 @@ export default function FeedPage() {
       <FeedHeader />
 
       <div className="px-4 py-4 space-y-4">
-        {/* 필터: 회사 (전체만 지원) */}
-        <div className="grid grid-cols-1 gap-3">
-          <Select value={companyId} onValueChange={setCompanyId}>
-            <SelectTrigger className="w-full max-w-[200px]">
-              <SelectValue placeholder="회사" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">전체</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
         {/* 정렬 탭 */}
         <Tabs value={sortBy} onValueChange={(v) => setSortBy(v as SortBy)}>
-          <TabsList variant="default" className="w-fit">
-            <TabsTrigger value="latest">최신순</TabsTrigger>
-            <TabsTrigger value="most-answers">답변 많은 순</TabsTrigger>
-          </TabsList>
+          <div className="flex items-center justify-between gap-4">
+            <Select value={job} onValueChange={setJob}>
+              <SelectTrigger className="w-full max-w-[200px]">
+                <SelectValue placeholder="직무" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">전체</SelectItem>
+                {jobCodes.map((c) => (
+                  <SelectItem key={c.code} value={c.code}>
+                    {c.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* <TabsList variant="default" className="w-fit">
+              <TabsTrigger value="latest">최신순</TabsTrigger>
+              <TabsTrigger value="most-answers">답변 많은 순</TabsTrigger>
+            </TabsList> */}
+            <span className="text-sm text-muted-foreground">최신순</span>
+          </div>
 
           <TabsContent value="latest" className="space-y-4 mt-4">
             {renderFeedList()}
@@ -138,7 +146,7 @@ export default function FeedPage() {
         )}
       </div>
 
-      {/* 질문하기 FAB */}
+      {/* 새 글 작성 FAB */}
       <button
         className="fixed right-4 bottom-24 z-50 flex items-center gap-2 px-5 py-3 rounded-full font-medium text-white shadow-lg transition-all hover:shadow-xl active:scale-95"
         style={{
@@ -150,10 +158,10 @@ export default function FeedPage() {
         onMouseLeave={(e) => {
           e.currentTarget.style.backgroundColor = 'var(--feed-accent-blue)';
         }}
-        aria-label="질문하기"
+        aria-label="새 글 작성"
       >
         <Plus className="size-5" />
-        <span>질문하기</span>
+        <span>새 글 작성</span>
       </button>
     </div>
   );
