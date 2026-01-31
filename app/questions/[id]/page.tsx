@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { QuestionDetailHeader, QuestionContent, AnswerList } from '@/components/Question';
+import {
+  QuestionDetailHeader,
+  QuestionContent,
+  AnswerList,
+  ShareAnswerToUnlockModal,
+} from '@/components/Question';
 import {
   getQuestionDetail,
   getAnswers,
@@ -151,6 +156,7 @@ export default function QuestionDetailPage() {
 
   return (
     <div className="min-h-screen bg-background pb-8">
+      {isLoggedIn && <ShareAnswerToUnlockModal questionId={id} />}
       <QuestionDetailHeader questionId={id} />
 
       <div className="px-4 py-6 space-y-6">
@@ -162,10 +168,7 @@ export default function QuestionDetailPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-foreground">
               답변
-              {!isLoggedIn && membersOnlyCount > 0
-                ? membersOnlyCount + allAnswers.length
-                : allAnswers.length}
-              개
+              {membersOnlyCount > 0 ? membersOnlyCount + allAnswers.length : allAnswers.length}개
             </h2>
 
             {/* 정렬 탭 */}
@@ -191,18 +194,24 @@ export default function QuestionDetailPage() {
                 onLike={handleLike}
                 membersOnlyCount={membersOnlyCount}
               />
-              {!isLoggedIn && allAnswers.length > 0 && membersOnlyCount > 0 && (
+              {allAnswers.length > 0 && membersOnlyCount > 0 && (
                 <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    <button
-                      type="button"
-                      onClick={() => router.push('/login')}
-                      className="font-medium text-primary underline underline-offset-2 hover:no-underline"
-                    >
-                      로그인
-                    </button>
-                    하고 {membersOnlyCount}개의 답변을 더 확인해보세요.
-                  </p>
+                  {isLoggedIn ? (
+                    <p className="text-sm text-muted-foreground">
+                      <button
+                        type="button"
+                        onClick={() => router.push('/login')}
+                        className="font-medium text-primary underline underline-offset-2 hover:no-underline"
+                      >
+                        로그인
+                      </button>
+                      하고 {membersOnlyCount}개의 답변을 더 확인해보세요.
+                    </p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      답변 하나를 공유하면 {membersOnlyCount}개의 답변을 더 확인할 수 있어요.
+                    </p>
+                  )}
                 </div>
               )}
             </>
