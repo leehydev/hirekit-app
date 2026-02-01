@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { API_URL } from '@/lib/api';
 import { useNavigationStore } from '@/store/navigation';
 import { LoginButton, AppLogo } from '@/components/Login';
+import { Spinner } from '@/components/ui/spinner';
 import Image from 'next/image';
 
 function LoginPageContent() {
@@ -79,7 +80,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-login-bg flex flex-col items-center justify-center px-6">
-          <p className="text-gray-400">로딩 중…</p>
+          <Spinner className="size-6 text-gray-400" />
         </div>
       }
     >

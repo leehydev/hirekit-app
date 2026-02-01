@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { AnswerCard } from './AnswerCard';
 import type { Answer } from '@/lib/api/questions';
 
@@ -91,20 +92,47 @@ export function AnswerList({
   }
 
   return (
-    <div className="space-y-4">
+    <motion.div
+      className="space-y-4"
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: {
+            staggerChildren: 0.1,
+          },
+        },
+      }}
+    >
       {answers.map((answer) => (
-        <AnswerCard
+        <motion.div
           key={answer.id}
-          answer={answer}
-          isLoggedIn={isLoggedIn}
-          onLike={onLike}
-          isAnswerAuthor={
-            !!currentUserId && !!answer.authorId && answer.authorId === currentUserId
-          }
-          onEdit={onAnswerEdit}
-          onDelete={onAnswerDelete}
-          onVisibility={onAnswerVisibility}
-        />
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: {
+                duration: 0.4,
+                ease: 'easeOut',
+              },
+            },
+          }}
+        >
+          <AnswerCard
+            answer={answer}
+            isLoggedIn={isLoggedIn}
+            onLike={onLike}
+            isAnswerAuthor={
+              !!currentUserId && !!answer.authorId && answer.authorId === currentUserId
+            }
+            onEdit={onAnswerEdit}
+            onDelete={onAnswerDelete}
+            onVisibility={onAnswerVisibility}
+          />
+        </motion.div>
       ))}
 
       <div ref={loadMoreRef} className="h-4" aria-hidden />
@@ -112,6 +140,6 @@ export function AnswerList({
       {isLoadingMore && (
         <p className="text-muted-foreground text-sm py-4 text-center">답변을 불러오는 중…</p>
       )}
-    </div>
+    </motion.div>
   );
 }

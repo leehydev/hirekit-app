@@ -6,6 +6,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { FeedItemCard } from '@/components/Feed/FeedItemCard';
 import {
   Select,
@@ -120,7 +121,11 @@ function CompanyFeedPageContent() {
   }
 
   if (isUserLoading) {
-    return <p className="py-8 text-center text-sm text-muted-foreground">로딩 중…</p>;
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Spinner className="size-6 text-muted-foreground" />
+      </div>
+    );
   }
 
   function renderFeedList() {
@@ -204,7 +209,13 @@ function CompanyFeedPageContent() {
 
 export default function CompanyFeedPage() {
   return (
-    <Suspense fallback={<p className="py-8 text-center text-sm text-muted-foreground">로딩 중…</p>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-[50vh] items-center justify-center">
+          <Spinner className="size-6 text-muted-foreground" />
+        </div>
+      }
+    >
       <CompanyFeedPageContent />
     </Suspense>
   );

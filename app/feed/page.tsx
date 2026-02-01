@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
 import { FeedHeader } from '@/components/Feed/FeedHeader';
 import { FeedItemCard } from '@/components/Feed/FeedItemCard';
 import {
@@ -13,7 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Spinner } from '@/components/ui/spinner';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { getFeed, feedKeys, type FeedItemResponse } from '@/lib/api';
 import { SortBy } from '@/types/feed';
 import { useNavigationStore } from '@/store/navigation';
@@ -98,7 +98,11 @@ function FeedPageContent() {
   }, [handleLoadMore]);
 
   if (isUserLoading) {
-    return <p className="py-8 text-center text-sm text-muted-foreground">로딩 중…</p>;
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Spinner className="size-6 text-muted-foreground" />
+      </div>
+    );
   }
 
   function renderFeedList() {
@@ -116,7 +120,12 @@ function FeedPageContent() {
       return <p className="text-muted-foreground text-sm py-8 text-center">아직 질문이 없어요.</p>;
     }
     return displayItems.map((item) => (
-      <FeedItemCard key={item.question.id} item={item} isLoggedIn={isLoggedIn} currentUserId={user?.id} />
+      <FeedItemCard
+        key={item.question.id}
+        item={item}
+        isLoggedIn={isLoggedIn}
+        currentUserId={user?.id}
+      />
     ));
   }
 
@@ -168,7 +177,13 @@ function FeedPageContent() {
 
 export default function FeedPage() {
   return (
-    <Suspense fallback={<p className="py-8 text-center text-sm text-muted-foreground">로딩 중…</p>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-[50vh] items-center justify-center">
+          <Spinner className="size-6 text-muted-foreground" />
+        </div>
+      }
+    >
       <FeedPageContent />
     </Suspense>
   );
