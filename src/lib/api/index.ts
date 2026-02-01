@@ -10,12 +10,7 @@ export {
   type CreateCompanyRequest,
   type PageResponse,
 } from './companies';
-export {
-  getCodes,
-  codeKeys,
-  type CodeItem,
-  type CodeGroupResponse,
-} from './codes';
+export { getCodes, codeKeys, type CodeItem, type CodeGroupResponse } from './codes';
 export {
   getFeed,
   feedKeys,

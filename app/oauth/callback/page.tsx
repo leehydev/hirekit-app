@@ -43,7 +43,7 @@ function OAuthCallbackContent() {
       const loginUrl = returnTo ? `/login?from=${encodeURIComponent(returnTo)}` : '/login';
       router.replace(loginUrl);
     } else {
-      fetchUser().then(() => router.replace(returnTo ?? '/'));
+      fetchUser().then(() => router.replace(returnTo ?? '/feed'));
     }
   }, [fetchUser, searchParams, router]);
 
