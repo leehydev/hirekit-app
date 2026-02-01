@@ -411,7 +411,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-border bg-muted/50 px-6 py-10">
         <div className="mx-auto max-w-md">
-          <div className="mb-6 flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+          {/* <div className="mb-6 flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
             <Link href="/about" className="hover:text-foreground transition-colors">
               서비스 소개
             </Link>
@@ -427,9 +427,9 @@ export default function HomePage() {
             <Link href="/contact" className="hover:text-foreground transition-colors">
               문의하기
             </Link>
-          </div>
+          </div> */}
           <p className="body-font text-center text-xs text-muted-foreground">
-            © 2025 Hirekit. All rights reserved.
+            © 2026 Hirekit. All rights reserved.
           </p>
         </div>
       </footer>
