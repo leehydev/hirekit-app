@@ -31,6 +31,32 @@ export interface PageResponse<T> {
 }
 
 /**
+ * 회사 등록 요청
+ * @see POST /api/companies
+ */
+export interface CreateCompanyRequest {
+  name: string;
+  industry: string;
+  ceoName: string;
+  address: string;
+  foundedDate: string | null; // ISO date (YYYY-MM-DD)
+  businessNumber: string;
+}
+
+/**
+ * 회사 등록
+ * @see POST /api/companies
+ */
+export async function createCompany(
+  body: CreateCompanyRequest
+): Promise<CompanyResponse> {
+  return fetchApi<CompanyResponse>('/api/companies', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+}
+
+/**
  * 법인명으로 기업 목록 검색 (공공데이터 기업개요 API 연동)
  * @param name 검색할 법인명(기업명)
  */
