@@ -29,6 +29,8 @@ function FeedPageContent() {
   const setBottomNavVisible = useNavigationStore((s) => s.setBottomNavVisible);
   const { data: user, isLoading: isUserLoading } = useUser();
   const isLoggedIn = !!user;
+  const canViewMembersOnly =
+    Array.isArray(user?.allowedVisibilities) && user.allowedVisibilities.includes('MEMBERS_ONLY');
 
   const job = searchParams.get('job') ?? 'all';
   const [sortBy, setSortBy] = useState<SortBy>('latest');
@@ -129,6 +131,7 @@ function FeedPageContent() {
         item={item}
         isLoggedIn={isLoggedIn}
         currentUserId={user?.id}
+        canViewMembersOnly={canViewMembersOnly}
       />
     ));
   }
