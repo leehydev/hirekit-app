@@ -8,24 +8,27 @@ function showErrorToast(message: string) {
   }
 }
 
+export type FetchApiOptions = RequestInit & {
+  /** true면 401 시 토스트 없이 에러만 throw (로그인 여부 확인용 호출에 사용) */
+  silentAuth?: boolean;
+};
+
 /**
  * API 호출 함수
  *
  * - credentials: 'include'로 쿠키 자동 전송
  * - 401 시: 토큰 있으면 refresh 시도, 없으면/실패 시 에러만 throw
- * - 에러 시: 에러 코드별 대고객 메시지로 토스트 표시 후 ApiError throw
+ * - 에러 시: 에러 코드별 대고객 메시지로 토스트 표시 후 ApiError throw (silentAuth: true면 401 시 토스트 생략)
  * - 리다이렉트/로그아웃은 하지 않음 → 로그인 필수 페이지(레이아웃/미들웨어 등)에서 처리
  */
-export async function fetchApi<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> {
+export async function fetchApi<T>(endpoint: string, options: FetchApiOptions = {}): Promise<T> {
+  const { silentAuth, ...init } = options;
   const config: RequestInit = {
-    ...options,
+    ...init,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...init.headers,
     },
   };
 
@@ -39,7 +42,7 @@ export async function fetchApi<T>(
 
     if (!tokenRes.ok) {
       const msg = '로그인이 필요해요.';
-      showErrorToast(msg);
+      if (!silentAuth) showErrorToast(msg);
       throw new ApiError(msg, 'UNAUTHORIZED');
     }
 
@@ -52,7 +55,7 @@ export async function fetchApi<T>(
       response = await fetch(`${API_URL}${endpoint}`, config);
     } else {
       const msg = '로그인이 필요해요.';
-      showErrorToast(msg);
+      if (!silentAuth) showErrorToast(msg);
       throw new ApiError(msg, 'UNAUTHORIZED');
     }
   }

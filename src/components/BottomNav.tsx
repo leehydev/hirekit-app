@@ -6,10 +6,10 @@ import { Home, PenSquare, SquareUser, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { href: '/feed', label: 'Feed', icon: Home },
+  { href: '/feed', label: '피드', icon: Home },
   { href: '/questions/new', label: '새 글 작성', icon: PenSquare },
-  { href: '/profile', label: 'Profile', icon: SquareUser },
-  { href: '/my', label: 'My', icon: User },
+  { href: '/portfolio', label: '포트폴리오', icon: SquareUser },
+  { href: '/my', label: '마이페이지', icon: User },
 ];
 
 export function BottomNav() {

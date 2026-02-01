@@ -29,8 +29,8 @@ export async function proxy(request: NextRequest) {
   }
 
   const cookieHeader = request.headers.get('cookie') ?? '';
-  const hasAccessToken = !!request.cookies.get(ACCESS_TOKEN_COOKIE_NAME)?.value?.trim();
-  const hasRefreshToken = !!request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)?.value?.trim();
+  const hasAccessToken = !!request.cookies.get(ACCESS_TOKEN_COOKIE_NAME!)?.value?.trim();
+  const hasRefreshToken = !!request.cookies.get(REFRESH_TOKEN_COOKIE_NAME!)?.value?.trim();
 
   // 3. 리프레시 토큰 없음 = 세션 없음 → 로그인으로
   if (!hasRefreshToken) {

@@ -9,17 +9,15 @@ import type { NextRequest } from 'next/server';
 export const AUTH_API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 /** 액세스 토큰 쿠키 이름 */
-export const ACCESS_TOKEN_COOKIE_NAME =
-  process.env.ACCESS_TOKEN_COOKIE_NAME ?? 'accessToken';
+export const ACCESS_TOKEN_COOKIE_NAME = process.env.ACCESS_TOKEN_COOKIE_NAME;
 /** 리프레시 토큰 쿠키 이름 */
-export const REFRESH_TOKEN_COOKIE_NAME =
-  process.env.REFRESH_TOKEN_COOKIE_NAME ?? 'refreshToken';
+export const REFRESH_TOKEN_COOKIE_NAME = process.env.REFRESH_TOKEN_COOKIE_NAME;
 
 /**
  * 전체 공개 경로 (비로그인 허용).
  * /questions는 별도 처리: /questions/new, /questions/[uuid]/answers/new는 로그인 필수.
  */
-export const PUBLIC_PATHS = ['/', '/login', '/oauth', '/404', '/500', '/feed'];
+export const PUBLIC_PATHS = ['/', '/login', '/oauth', '/404', '/500', '/feed', '/search'];
 
 /** 에러 시 리다이렉트 대상 페이지 */
 export const ERROR_PAGES = {
