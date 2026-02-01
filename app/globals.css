@@ -46,24 +46,42 @@
   --sidebar-ring: oklch(0.704 0.04 256.788);
 
   /* Social login colors */
-  --kakao-yellow: #FEE500;
+  --kakao-yellow: #fee500;
   --kakao-text: #000000;
-  --naver-green: #03C75A;
-  --naver-text: #FFFFFF;
-  --login-bg: #1A1D2E;
+  --naver-green: #03c75a;
+  --naver-text: #ffffff;
+  --login-bg: #1a1d2e;
 
   /* Feed page colors */
-  --feed-accent-blue: #1E90FF;
-  --feed-accent-blue-hover: #1C7ED6;
-  --tag-blue-bg: #1E3A5F;
-  --tag-blue-text: #60A5FA;
-  --tag-purple-bg: #5B21B6;
-  --tag-purple-text: #C4B5FD;
+  --feed-accent-blue: #1e90ff;
+  --feed-accent-blue-hover: #1c7ed6;
+  --tag-blue-bg: #1e3a5f;
+  --tag-blue-text: #60a5fa;
+  --tag-purple-bg: #5b21b6;
+  --tag-purple-text: #c4b5fd;
   --tag-gray-bg: #374151;
-  --tag-gray-text: #9CA3AF;
-  --status-success-bg: #064E3B;
-  --status-success-text: #34D399;
-  --tip-yellow: #FCD34D;
+  --tag-gray-text: #9ca3af;
+  --status-success-bg: #064e3b;
+  --status-success-text: #34d399;
+  --tip-yellow: #fcd34d;
+
+  /* Difficulty badge colors */
+  --difficulty-beginner-bg: #065f46;
+  --difficulty-beginner-text: #34d399;
+  --difficulty-intermediate-bg: #7c2d12;
+  --difficulty-intermediate-text: #fb923c;
+  --difficulty-advanced-bg: #7f1d1d;
+  --difficulty-advanced-text: #f87171;
+
+  /* Search result colors */
+  --search-accent-blue: #3b82f6;
+
+  /* Landing page colors */
+  --landing-primary: #1560bd;
+  --landing-primary-dark: #11509d;
+  --landing-navy: #011f5b;
+  --landing-gradient-from: #1560bd;
+  --landing-gradient-to: #011f5b;
 }
 
 @theme inline {
@@ -127,6 +145,28 @@
   --color-status-success-bg: var(--status-success-bg);
   --color-status-success-text: var(--status-success-text);
   --color-tip-yellow: var(--tip-yellow);
+
+  /* Difficulty badge colors */
+  --color-difficulty-beginner-bg: var(--difficulty-beginner-bg);
+  --color-difficulty-beginner-text: var(--difficulty-beginner-text);
+  --color-difficulty-intermediate-bg: var(--difficulty-intermediate-bg);
+  --color-difficulty-intermediate-text: var(--difficulty-intermediate-text);
+  --color-difficulty-advanced-bg: var(--difficulty-advanced-bg);
+  --color-difficulty-advanced-text: var(--difficulty-advanced-text);
+
+  /* Search result colors */
+  --color-search-accent-blue: var(--search-accent-blue);
+
+  /* Landing page colors */
+  --color-landing-primary: var(--landing-primary);
+  --color-landing-primary-dark: var(--landing-primary-dark);
+  --color-landing-navy: var(--landing-navy);
+  --color-landing-gradient-from: var(--landing-gradient-from);
+  --color-landing-gradient-to: var(--landing-gradient-to);
+
+  /* Font families */
+  --font-heading: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Source Sans 3', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -197,4 +237,12 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@utility heading-font {
+  font-family: var(--font-heading);
+}
+
+@utility body-font {
+  font-family: var(--font-body);
 }

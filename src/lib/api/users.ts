@@ -18,7 +18,8 @@ export const userKeys = {
 
 /**
  * 현재 로그인 사용자 정보 조회
+ * 공개 페이지에서 수시로 호출되므로 401 시 토스트 없이 에러만 반환(silentAuth)
  */
 export function getMe() {
-  return fetchApi<User>('/api/users/me');
+  return fetchApi<User>('/api/users/me', { silentAuth: true });
 }
