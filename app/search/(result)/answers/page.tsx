@@ -6,6 +6,7 @@ import { SearchResultHeader, AnswerSearchCard, EmptyState } from '@/components/S
 import { searchAnswers, type AnswerDetailResponse } from '@/lib/api/search';
 import { SEARCH_QUERY_KEY } from '@/types/search';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 
 const PAGE_SIZE = 20;
 
@@ -108,7 +109,8 @@ function AnswersSearchContent() {
       </div>
       {page < totalPages - 1 && (
         <div className="px-4 py-6 flex justify-center">
-          <Button variant="outline" onClick={loadMore} disabled={loading}>
+          <Button variant="outline" onClick={loadMore} disabled={loading} className="gap-2">
+            {loading && <Spinner className="size-4" />}
             {loading ? '불러오는 중...' : '더 보기'}
           </Button>
         </div>

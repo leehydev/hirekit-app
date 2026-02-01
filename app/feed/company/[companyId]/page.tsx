@@ -130,7 +130,11 @@ function CompanyFeedPageContent() {
 
   function renderFeedList() {
     if (isLoading) {
-      return <p className="text-muted-foreground text-sm py-8 text-center">불러오는 중…</p>;
+      return (
+        <div className="flex items-center justify-center py-8">
+          <Spinner className="size-6 text-muted-foreground" />
+        </div>
+      );
     }
     if (isError) {
       return (
@@ -200,7 +204,9 @@ function CompanyFeedPageContent() {
 
         <div ref={loadMoreRef} className="h-4" aria-hidden />
         {isFetchingNextPage && (
-          <p className="text-muted-foreground text-sm py-4 text-center">더 불러오는 중…</p>
+          <div className="flex items-center justify-center py-4">
+            <Spinner className="size-5 text-muted-foreground" />
+          </div>
         )}
       </div>
     </div>

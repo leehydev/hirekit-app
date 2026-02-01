@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { AnswerCard } from './AnswerCard';
+import { Spinner } from '@/components/ui/spinner';
 import type { Answer } from '@/lib/api/questions';
 
 interface AnswerListProps {
@@ -138,7 +139,9 @@ export function AnswerList({
       <div ref={loadMoreRef} className="h-4" aria-hidden />
 
       {isLoadingMore && (
-        <p className="text-muted-foreground text-sm py-4 text-center">답변을 불러오는 중…</p>
+        <div className="flex items-center justify-center py-4">
+          <Spinner className="size-5 text-muted-foreground" />
+        </div>
       )}
     </motion.div>
   );

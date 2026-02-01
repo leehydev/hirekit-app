@@ -15,6 +15,7 @@ import {
   DeleteAnswerDialog,
   VisibilityAnswerDialog,
 } from '@/components/Question';
+import { Spinner } from '@/components/ui/spinner';
 import {
   getQuestionDetail,
   getAnswers,
@@ -144,8 +145,8 @@ export default function QuestionDetailPage() {
     return (
       <div className="min-h-screen bg-background">
         <QuestionDetailHeader questionId={id} />
-        <div className="px-4 py-8">
-          <p className="text-center text-sm text-muted-foreground">질문을 불러오는 중…</p>
+        <div className="flex items-center justify-center px-4 py-8">
+          <Spinner className="size-6 text-muted-foreground" />
         </div>
       </div>
     );
@@ -246,7 +247,9 @@ export default function QuestionDetailPage() {
 
           {/* 답변 목록 */}
           {isAnswersLoading ? (
-            <p className="text-center text-sm text-muted-foreground py-8">답변을 불러오는 중…</p>
+            <div className="flex items-center justify-center py-8">
+              <Spinner className="size-6 text-muted-foreground" />
+            </div>
           ) : (
             <>
               <AnswerList

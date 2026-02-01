@@ -7,6 +7,7 @@ import { searchCompanies } from '@/lib/api/search';
 import type { CompanyResponse } from '@/lib/api/companies';
 import { SEARCH_QUERY_KEY } from '@/types/search';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 
 const PAGE_SIZE = 20;
 
@@ -112,7 +113,8 @@ function CompaniesSearchContent() {
       </div>
       {page < totalPages - 1 && (
         <div className="px-4 py-6 flex justify-center">
-          <Button variant="outline" onClick={loadMore} disabled={loading}>
+          <Button variant="outline" onClick={loadMore} disabled={loading} className="gap-2">
+            {loading && <Spinner className="size-4" />}
             {loading ? '불러오는 중...' : '더 보기'}
           </Button>
         </div>
