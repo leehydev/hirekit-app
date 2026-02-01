@@ -8,7 +8,6 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import {
   CheckCircle2,
   Shield,
@@ -58,9 +57,12 @@ export default function HomePage() {
             <Button
               size="lg"
               className="heading-font w-full bg-kakao-yellow text-kakao-text hover:bg-kakao-yellow/90 text-base font-semibold"
+              asChild
             >
-              <Image src="/icons/icon-kakao.png" alt="Kakao" width={24} height={24} />
-              카카오로 시작하기
+              <Link href="/login" className="inline-flex items-center justify-center gap-2">
+                <Image src="/icons/icon-kakao.png" alt="Kakao" width={24} height={24} />
+                카카오로 시작하기
+              </Link>
             </Button>
             <p className="body-font text-center text-xs text-muted-foreground">
               회원가입 없이 간편하게 시작하세요
@@ -401,9 +403,12 @@ export default function HomePage() {
           <Button
             size="lg"
             className="heading-font w-full max-w-xs bg-kakao-yellow text-kakao-text hover:bg-(--kakao-yellow)/90 text-base font-semibold"
+            asChild
           >
-            <Image src="/icons/icon-kakao.png" alt="Kakao" width={24} height={24} />
-            카카오로 시작하기
+            <Link href="/login" className="inline-flex items-center justify-center gap-2">
+              <Image src="/icons/icon-kakao.png" alt="Kakao" width={24} height={24} />
+              카카오로 시작하기
+            </Link>
           </Button>
         </div>
       </section>

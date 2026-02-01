@@ -18,6 +18,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { createAnswer, getQuestionDetail, questionKeys } from '@/lib/api';
+import { useUserStore } from '@/store/user';
 import { useCodes } from '@/hooks/useCodes';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 
@@ -36,6 +37,7 @@ export default function AnswerNewPage() {
   const router = useRouter();
   const questionId = params.id as string;
   const { isLoading: isAuthLoading } = useRequireAuth();
+  const fetchUser = useUserStore((s) => s.fetchUser);
   const { data: codesData } = useCodes();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -77,12 +79,13 @@ export default function AnswerNewPage() {
           interviewDate: values.interviewDate || undefined,
           visibility: values.visibility,
         });
+        await fetchUser();
         router.replace(`/questions/${questionId}`);
       } finally {
         setIsSubmitting(false);
       }
     },
-    [questionId, router],
+    [questionId, router, fetchUser],
   );
 
   const contentValue = watch('content') ?? '';
