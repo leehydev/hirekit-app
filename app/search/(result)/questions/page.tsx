@@ -8,6 +8,7 @@ import { SEARCH_QUERY_KEY } from '@/types/search';
 import type { SearchQuestion } from '@/types/search';
 import type { QuestionDetail } from '@/lib/api/questions';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 
 const PAGE_SIZE = 20;
 
@@ -133,7 +134,9 @@ function QuestionsSearchContent() {
             variant="outline"
             onClick={loadMore}
             disabled={loading}
+            className="gap-2"
           >
+            {loading && <Spinner className="size-4" />}
             {loading ? '불러오는 중...' : '더 보기'}
           </Button>
         </div>

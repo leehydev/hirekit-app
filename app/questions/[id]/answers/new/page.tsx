@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import {
   Select,
   SelectContent,
@@ -91,10 +92,11 @@ export default function AnswerNewPage() {
   const contentValue = watch('content') ?? '';
   const contentLength = contentValue.length;
 
-  if (isAuthLoading) {
+  // 제출 중에는 auth 재검증 로딩으로 화면을 갈아끼우지 않음 (fetchUser 시 isLoading true 되면서 폼이 잠깐 다시 보이는 현상 방지)
+  if (isAuthLoading && !isSubmitting) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-sm text-muted-foreground">로딩 중…</p>
+        <Spinner className="size-6 text-muted-foreground" />
       </div>
     );
   }

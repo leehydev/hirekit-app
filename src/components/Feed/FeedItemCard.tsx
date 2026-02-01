@@ -2,6 +2,8 @@
 
 import { Lightbulb, Pencil, User } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import type { FeedItemResponse } from '@/lib/api/feed';
 import { formatTimeAgo, formatAnswerCount } from '@/lib/formatters';
 import { truncateText } from '@/lib/formatters';
@@ -17,6 +19,7 @@ interface FeedItemCardProps {
 }
 
 export function FeedItemCard({ item, isLoggedIn, currentUserId }: FeedItemCardProps) {
+  const router = useRouter();
   const { getLabel } = useCodes();
   const { question, representativeAnswer, answerCounts } = item;
   const jobLabel = getLabel('Job', question.job);
@@ -40,28 +43,49 @@ export function FeedItemCard({ item, isLoggedIn, currentUserId }: FeedItemCardPr
     : undefined;
   const hasMembersOnly = answerCounts.membersOnlyAnswerCount > 0;
 
-  return (
-    <article className="rounded-xl bg-card p-4 space-y-3 border border-border/50">
-      {/* 태그 및 작성 시간 */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          {isQuestionAuthor && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
-              <User className="size-3.5" />
-              내가 쓴 글
-            </span>
-          )}
-          <QuestionTag label={question.companyName} variant="company" />
-          <QuestionTag label={jobLabel} variant="category" />
-          <span className="text-muted-foreground text-xs">{authorLabel}</span>
-        </div>
-        <time className="text-muted-foreground text-xs whitespace-nowrap">
-          {formatTimeAgo(question.createdAt)}
-        </time>
-      </div>
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Prevent navigation if clicking on interactive elements
+    const target = e.target as HTMLElement;
+    if (target.closest('a, button')) {
+      return;
+    }
+    router.push(`/questions/${question.id}`);
+  };
 
-      {/* 질문 내용 */}
-      <h3 className="text-foreground font-medium text-base leading-snug">{question.content}</h3>
+  return (
+    <motion.article
+      layoutId={`question-card-${question.id}`}
+      onClick={handleCardClick}
+      className="rounded-xl bg-card p-4 space-y-3 border border-border/50 cursor-pointer hover:border-primary/20 transition-colors"
+    >
+        {/* 태그 및 작성 시간 */}
+        <motion.div
+          layoutId={`question-tags-${question.id}`}
+          className="flex items-center justify-between gap-2"
+        >
+          <div className="flex items-center gap-2 flex-wrap">
+            {isQuestionAuthor && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                <User className="size-3.5" />
+                내가 쓴 글
+              </span>
+            )}
+            <QuestionTag label={question.companyName} variant="company" />
+            <QuestionTag label={jobLabel} variant="category" />
+            <span className="text-muted-foreground text-xs">{authorLabel}</span>
+          </div>
+          <time className="text-muted-foreground text-xs whitespace-nowrap">
+            {formatTimeAgo(question.createdAt)}
+          </time>
+        </motion.div>
+
+        {/* 질문 내용 */}
+        <motion.h3
+          layoutId={`question-content-${question.id}`}
+          className="text-foreground font-medium text-base leading-snug"
+        >
+          {question.content}
+        </motion.h3>
 
       {/* 합격 여부 및 팁 */}
       <div className="space-y-2">
@@ -129,6 +153,6 @@ export function FeedItemCard({ item, isLoggedIn, currentUserId }: FeedItemCardPr
           </p>
         )}
       </div>
-    </article>
+    </motion.article>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Building2 } from 'lucide-react';
 import { CompanySearchModal } from '@/components/CompanySearchModal';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import type { CompanyResponse } from '@/lib/api';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 
@@ -17,9 +18,9 @@ export default function CompanySearchExamplePage() {
 
   if (isAuthLoading) {
     return (
-      <p className="py-12 text-center text-sm text-muted-foreground">
-        로딩 중…
-      </p>
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Spinner className="size-6 text-muted-foreground" />
+      </div>
     );
   }
 

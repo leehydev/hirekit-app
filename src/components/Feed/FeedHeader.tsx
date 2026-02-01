@@ -9,7 +9,7 @@ export function FeedHeader() {
       <div className="flex items-center justify-between px-4 py-3">
         {/* Logo */}
         <Link href="/feed" className="flex items-center gap-2 shrink-0">
-          <div className="relative w-28 h-8 shrink-0">
+          <div className="relative w-24 h-8 shrink-0">
             <Image
               src="/hirekit/logo.png"
               alt="HireKit"
@@ -22,7 +22,11 @@ export function FeedHeader() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <button type="button" className="p-2 rounded-lg hover:bg-accent transition-colors" aria-label="검색">
+          <button
+            type="button"
+            className="p-2 rounded-lg hover:bg-accent transition-colors"
+            aria-label="검색"
+          >
             <Search className="size-5 text-foreground" />
           </button>
           <FeedHeaderMenu />
