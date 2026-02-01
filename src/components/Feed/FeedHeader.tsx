@@ -8,14 +8,14 @@ export function FeedHeader() {
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="flex items-center justify-between px-4 py-3">
         {/* Logo */}
-        <Link href="/feed" className="flex items-center gap-2">
-          <div className="relative w-28 h-8">
+        <Link href="/feed" className="flex items-center gap-2 shrink-0">
+          <div className="relative w-28 h-8 shrink-0">
             <Image
               src="/hirekit/logo.png"
               alt="HireKit"
-              width={100}
-              height={100}
-              className="rounded-lg"
+              fill
+              sizes="112px"
+              className="rounded-lg object-contain object-left"
             />
           </div>
         </Link>
