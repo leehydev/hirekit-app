@@ -16,9 +16,11 @@ interface FeedItemCardProps {
   isLoggedIn?: boolean;
   /** 현재 로그인한 사용자 ID – 질문 작성자일 때 "내가 쓴 글" 뱃지 표시 */
   currentUserId?: string;
+  /** 사용자가 MEMBERS_ONLY 답변을 볼 수 있는 권한이 있는지 여부 */
+  canViewMembersOnly?: boolean;
 }
 
-export function FeedItemCard({ item, isLoggedIn, currentUserId }: FeedItemCardProps) {
+export function FeedItemCard({ item, isLoggedIn, currentUserId, canViewMembersOnly }: FeedItemCardProps) {
   const router = useRouter();
   const { getLabel } = useCodes();
   const { question, representativeAnswer, answerCounts } = item;
@@ -146,7 +148,7 @@ export function FeedItemCard({ item, isLoggedIn, currentUserId }: FeedItemCardPr
             하면 답변 {answerCounts.membersOnlyAnswerCount}개를 더 볼 수 있어요.
           </p>
         )}
-        {hasMembersOnly && isLoggedIn && (
+        {hasMembersOnly && isLoggedIn && !canViewMembersOnly && (
           <p className="text-xs text-muted-foreground">
             답변 하나를 공유하면 {answerCounts.membersOnlyAnswerCount}개의 답변을 더 확인할 수
             있어요.
