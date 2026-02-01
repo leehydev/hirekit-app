@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserStore } from '@/store/user';
 import { useNavigationStore } from '@/store/navigation';
 
-/** return_to가 앱 내부 경로인지 검증 (오픈 리다이렉트 방지) */
+/** return_to가 앱 내부 경로인지 검증 (오픈 리다이렉트 방지). 루트(/)는 리턴 없음으로 처리 */
 function getValidReturnTo(value: string | null): string | null {
   if (!value || typeof value !== 'string') return null;
-  if (!value.startsWith('/') || value.startsWith('//')) return null;
+  if (!value.startsWith('/') || value.startsWith('//') || value === '/') return null;
   return value;
 }
 
