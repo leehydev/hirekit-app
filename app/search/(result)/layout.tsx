@@ -1,12 +1,12 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
+import { Suspense, useCallback, useState, useEffect } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { SearchHeader } from '@/components/Search';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { SEARCH_QUERY_KEY } from '@/types/search';
 
-export default function SearchResultLayout({ children }: { children: React.ReactNode }) {
+function SearchResultLayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -82,5 +82,13 @@ export default function SearchResultLayout({ children }: { children: React.React
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export default function SearchResultLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <SearchResultLayoutContent>{children}</SearchResultLayoutContent>
+    </Suspense>
   );
 }

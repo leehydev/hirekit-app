@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { SearchResultHeader, QuestionSearchCard, EmptyState } from '@/components/Search';
 import { searchQuestions } from '@/lib/api/search';
@@ -23,7 +23,7 @@ function mapToSearchQuestion(item: QuestionDetail): SearchQuestion {
   };
 }
 
-export default function QuestionsSearchPage() {
+function QuestionsSearchContent() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get(SEARCH_QUERY_KEY)?.trim() ?? '';
   const [questions, setQuestions] = useState<SearchQuestion[]>([]);
@@ -139,5 +139,13 @@ export default function QuestionsSearchPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function QuestionsSearchPage() {
+  return (
+    <Suspense fallback={<div className="px-4 py-8 text-center text-muted-foreground">검색 중...</div>}>
+      <QuestionsSearchContent />
+    </Suspense>
   );
 }

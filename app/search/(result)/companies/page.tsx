@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { SearchResultHeader, CompanySearchCard, EmptyState } from '@/components/Search';
 import { searchCompanies } from '@/lib/api/search';
@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 
 const PAGE_SIZE = 20;
 
-export default function CompaniesSearchPage() {
+function CompaniesSearchContent() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get(SEARCH_QUERY_KEY)?.trim() ?? '';
   const [companies, setCompanies] = useState<CompanyResponse[]>([]);
@@ -118,5 +118,13 @@ export default function CompaniesSearchPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CompaniesSearchPage() {
+  return (
+    <Suspense fallback={<div className="px-4 py-8 text-center text-muted-foreground">검색 중...</div>}>
+      <CompaniesSearchContent />
+    </Suspense>
   );
 }

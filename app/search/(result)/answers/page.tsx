@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { SearchResultHeader, AnswerSearchCard, EmptyState } from '@/components/Search';
 import { searchAnswers, type AnswerDetailResponse } from '@/lib/api/search';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 
 const PAGE_SIZE = 20;
 
-export default function AnswersSearchPage() {
+function AnswersSearchContent() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get(SEARCH_QUERY_KEY)?.trim() ?? '';
   const [answers, setAnswers] = useState<AnswerDetailResponse[]>([]);
@@ -114,5 +114,13 @@ export default function AnswersSearchPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AnswersSearchPage() {
+  return (
+    <Suspense fallback={<div className="px-4 py-8 text-center text-muted-foreground">검색 중...</div>}>
+      <AnswersSearchContent />
+    </Suspense>
   );
 }
